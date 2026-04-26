@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Investa Agora</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+    .app-header {
+      background: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-header h1 { font-size: 26px; font-weight: 700; }
+    .app-header p { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+    .notif-bell {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .notif-badge {
+      position: absolute;
+      top: -2px; right: -2px;
+      background: #e74c3c;
+      color: #fff;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .notif-badge.show { display: flex; }
+    .notif-dropdown {
+      position: fixed;
+      top: 75px; right: 10px; left: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+    .notif-dropdown.show { display: block; }
+    .notif-dropdown-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 700;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f2f5;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .notif-item.unread { border-left: 3px solid #27ae60; }
+    .notif-item .icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .notif-item .icon.aprovado { background: #d5f5e3; }
+    .notif-item .icon.rejeitado { background: #f8d7da; }
+    .notif-item .icon.deposito { background: #d6eaf8; }
+    .notif-item .content { flex: 1; }
+    .notif-item .title { font-size: 14px; font-weight: 600; color: #2c3e50; }
+    .notif-item .desc { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+    .notif-item .time { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+    .notif-empty { text-align: center; padding: 30px; color: #95a5a6; }
+    .user-bar {
+      background: #1a252f;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .user-bar strong { color: #27ae60; }
+    .nav-menu {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 12px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 68px;
+      z-index: 99;
+    }
+    .nav-menu button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      background: #ecf0f1;
+      color: #2c3e50;
+      transition: all 0.2s;
+    }
+    .nav-menu button.active { background: #27ae60; color: #fff; }
+    .tab-content { display: none; padding: 0 16px 20px; }
+    .tab-content.active { display: block; }
+    #saldo-box {
+      max-width: 900px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .saldo-item { text-align: center; }
+    .saldo-item .label { color: #7f8c8d; font-size: 13px; text-transform: uppercase; font-weight: 600; }
+    .saldo-item .value { font-size: 28px; font-weight: 700; color: #2c3e50; }
+    .saldo-item .value.green { color: #27ae60; }
+    .saldo-item .value.orange { color: #d35400; }
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 16px;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .option {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 28px;
+      width: 100%;
+      max-width: 340px;
+      position: relative;
+      overflow: hidden;
+    }
+    .option .badge {
+      position: absolute;
+      top: 16px; right: -32px;
+      background: #e74c3c;
+      color: #fff;
+      padding: 6px 32px;
+      font-size: 11px;
+      font-weight: 700;
+      transform: rotate(45deg);
+    }
+    .option h2 { color: #2c3e50; margin-bottom: 16px; font-size: 24px; }
+    .option .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ecf0f1;
+      font-size: 16px;
+    }
+    .option .info-row:last-child { border-bottom: none; }
+    .option .label { color: #7f8c8d; }
+    .option .value { font-weight: 600; color: #2c3e50; }
+    .option .value.green { color: #27ae60; }
+    .option .value.red { color: #e74c3c; }
+    button.invest {
+      width: 100%;
+      background: #27ae60;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    button.invest.sem-saldo { background: #e74c3c; }
+    button.invest:disabled { background: #95a5a6; cursor: not-allowed; }
+    .deposito-area {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .deposito-area h3 { color: #2c3e50; margin-bottom: 14px; font-size: 20px; }
+    .deposito-area > p { color: #7f8c8d; font-size: 14px; margin-bottom: 14px; }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .qr-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qr-item:active { transform: scale(0.97); }
+    .qr-item.selected { border-color: #27ae60; background: #d5f5e3; }
+    .qr-item .valor-qr { font-size: 20px; font-weight: 700; color: #27ae60; }
+    .qr-item .label-qr { font-size: 12px; color: #7f8c8d; margin-top: 4px; }
+    .qr-item img {
+      width: 100%;
+      max-width: 120px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .timer-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      border: 2px solid #ecf0f1;
+      display: none;
+    }
+    .timer-box.show { display: block; }
+    .timer-box .timer-label { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; }
+    .timer-box .timer-display {
+      font-size: 40px;
+      font-weight: 700;
+      color: #d35400;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer-box .timer-display.urgente { color: #e74c3c; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .timer-box .timer-info { font-size: 13px; color: #7f8c8d; margin-top: 10px; }
+    .btn-confirmar-deposito {
+      width: 100%;
+      background: #27ae60;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-confirmar-deposito:disabled { background: #95a5a6; cursor: not-allowed; }
+    .saque-area {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .saque-area h3 { color: #2c3e50; margin-bottom: 14px; font-size: 20px; text-align: center; }
+    .info-saque {
+      background: #fff3cd;
+      border-left: 3px solid #ffc107;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #856404;
+    }
+    .saque-area label {
+      display: block;
+      font-size: 13px;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-top: 12px;
+      margin-bottom: 5px;
+    }
+    .saque-area input, .saque-area select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ecf0f1;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .saque-area input:focus, .saque-area select:focus { outline: none; border-color: #27ae60; }
+    .btn-saque {
+      width: 100%;
+      background: #2980b9;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-saque:disabled { background: #95a5a6; cursor: not-allowed; }
+    #historico {
+      max-width: 900px;
+      margin: 14px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    #historico h3 { color: #2c3e50; margin-bottom: 12px; font-size: 18px; }
+    .hist-list { list-style: none; }
+    .hist-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      margin: 8px 0;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 3px solid #27ae60;
+      font-size: 15px;
+    }
+    .hist-list li.deposito { border-left-color: #2980b9; }
+    .hist-list li.saque { border-left-color: #d35400; }
+    .hist-list li .left { flex: 1; }
+    .hist-list li .tipo { font-weight: 600; color: #2c3e50; }
+    .hist-list li .data { font-size: 12px; color: #95a5a6; margin-top: 3px; }
+    .hist-list li .valor { font-weight: 700; }
+    .hist-list li .valor.pos { color: #27ae60; }
+    .hist-list li .valor.neg { color: #d35400; }
+    .status {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #d5f5e3;
+      color: #27ae60;
+      font-weight: 600;
+      margin-top: 5px;
+      display: inline-block;
+    }
+    .status.pendente { background: #fff3cd; color: #856404; }
+    .status.rejeitado { background: #f8d7da; color: #721c24; }
+    .empty-state { text-align: center; padding: 35px; color: #95a5a6; font-size: 15px; }
+    .qr-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .qr-overlay.show { display: flex; }
+    .qr-overlay .qr-valor { font-size: 26px; font-weight: 700; color: #27ae60; margin-bottom: 14px; }
+    .qr-overlay img { max-width: 280px; width: 100%; border-radius: 14px; margin-bottom: 14px; }
+    .qr-overlay .qr-info { color: #95a5a6; font-size: 14px; margin-bottom: 18px; text-align: center; }
+    .qr-overlay .btn-fechar {
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27ae60;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 3000;
+      animation: slideUp 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.erro { background: #e74c3c; }
+    .toast.info { background: #2980b9; }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    footer {
+      background: #2c3e50;
+      color: #fff;
+      text-align: center;
+      padding: 14px;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    @media (max-width: 600px) {
+      .option { width: 100%; max-width: none; margin: 0 4px; }
+      #saldo-box { margin: 12px; padding: 20px 12px; }
+      .saldo-item .value { font-size: 24px; }
+      .nav-menu { flex-wrap: wrap; gap: 8px; }
+      .nav-menu button { flex: 1; min-width: 100px; padding: 12px; font-size: 13px; }
+      .qr-grid { grid-template-columns: repeat(1, 1fr); }
+      .app-header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <div class="app-header-top">
+      <div>
+        <h1>Investa Agora</h1>
+        <p>Plataforma de Investimentos Inteligentes</p>
+      </div>
+      <button class="notif-bell" onclick="toggleNotif(event)">
+        🔔
+        <span class="notif-badge" id="notifBadge">0</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="notif-dropdown" id="notifDropdown">
+    <div class="notif-dropdown-header">🔔 Notificações</div>
+    <div id="notifList"><div class="notif-empty">Nenhuma notificação</div></div>
+  </div>
+  
+  <div class="user-bar">
+    <span>ID: <strong id="userIdDisplay">---</strong></span>
+    <span id="userDate"></span>
+  </div>
+  
+  <div class="nav-menu">
+    <button class="active" onclick="mostrarAba('investir', this)">📈 Investir</button>
+    <button onclick="mostrarAba('depositar', this)">💰 Depositar</button>
+    <button onclick="mostrarAba('sacar', this)">💸 Sacar</button>
+    <button onclick="mostrarAba('historico', this)">📋 Extrato</button>
+  </div>
+
+  <div id="aba-investir" class="tab-content active">
+    <div id="saldo-box">
+      <div class="saldo-item">
+        <div class="label">Saldo Disponível</div>
+        <div class="value green" id="saldo">R$ 0,00</div>
+      </div>
+      <div class="saldo-item">
+        <div class="label">Total Investido</div>
+        <div class="value orange" id="totalInvestido">R$ 0,00</div>
+      </div>
+      <div class="saldo-item">
+        <div class="label">Total em Rendimentos</div>
+        <div class="value" id="totalRendimentos">R$ 0,00</div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="option">
+        <div class="badge">POPULAR</div>
+        <h2>Starter</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 5,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 3,00</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">3 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 9,00</span></div>
+        <button class="invest" id="btn-inv1" onclick="investir(1)">Investir Agora</button>
+      </div>
+      <div class="option">
+        <h2>Pro</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 10,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 3,10</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">5 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 15,50</span></div>
+        <button class="invest" id="btn-inv2" onclick="investir(2)">Investir Agora</button>
+      </div>
+      <div class="option">
+        <h2>Premium</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 50,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 8,00</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">8 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 64,00</span></div>
+        <button class="invest" id="btn-inv3" onclick="investir(3)">Investir Agora</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="aba-depositar" class="tab-content">
+    <div class="deposito-area">
+      <h3>💰 Depositar via Pix</h3>
+      <p>Escaneie o QR Code e pague via Pix. Depois confirme o depósito.</p>
+      
+      <div class="qr-grid">
+        <div class="qr-item" onclick="selecionarQR(5)" id="qr-item-5">
+          <div class="valor-qr">R$ 5</div>
+          <div class="label-qr">Starter</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$5" alt="QR R$ 5">
+        </div>
+        <div class="qr-item" onclick="selecionarQR(10)" id="qr-item-10">
+          <div class="valor-qr">R$ 10</div>
+          <div class="label-qr">Pro</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$10" alt="QR R$ 10">
+        </div>
+        <div class="qr-item" onclick="selecionarQR(50)" id="qr-item-50">
+          <div class="valor-qr">R$ 50</div>
+          <div class="label-qr">Premium</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$50" alt="QR R$ 50">
+        </div>
+      </div>
+      
+      <div class="timer-box" id="timerBox">
+        <div class="timer-label">⏱️ Tempo para confirmar depósito</div>
+        <div class="timer-display" id="timerDisplay">05:00</div>
+        <div class="timer-info">Escaneie o QR Code, pague e clique em "Já Paguei"</div>
+        <button class="btn-confirmar-deposito" id="btnConfirmarDeposito" onclick="confirmarDeposito()">✅ Já Paguei - Confirmar Depósito</button>
+      </div>
+      
+      <p style="font-size: 12px; color: #95a5a6; margin-top: 14px; text-align: center;">
+        ⚠️ O depósito será analisado pelo admin antes de ser aprovado.
+      </p>
+    </div>
+  </div>
+
+  <div id="aba-sacar" class="tab-content">
+    <div class="saque-area">
+      <h3>💸 Solicitar Saque</h3>
+      <div class="info-saque">
+        📌 Saque mínimo: <strong>R$ 8,00</strong><br>
+        Saldo: <strong id="saldoSaque">R$ 0,00</strong>
+      </div>
+      <label>Valor do Saque (R$)</label>
+      <input type="number" id="valorSaque" placeholder="0,00" min="8" step="0.01">
+      <label>Tipo de Chave Pix</label>
+      <select id="tipoChaveSaque">
+        <option value="cpf">CPF</option>
+        <option value="email">E-mail</option>
+        <option value="telefone">Telefone</option>
+        <option value="aleatoria">Chave Aleatória</option>
+      </select>
+      <label>Chave Pix</label>
+      <input type="text" id="chaveSaque" placeholder="Digite sua chave Pix">
+      <label>Nome do Titular</label>
+      <input type="text" id="nomeTitular" placeholder="Nome completo">
+      <button class="btn-saque" id="btnSaque" onclick="sacar()">Solicitar Saque</button>
+    </div>
+  </div>
+
+  <div id="aba-historico" class="tab-content">
+    <div id="historico">
+      <h3>📊 Investimentos</h3>
+      <ul class="hist-list" id="listaHistorico">
+        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">📈</div><p>Nenhum investimento realizado</p></li>
+      </ul>
+    </div>
+    <div id="historico">
+      <h3>💰 Depósitos</h3>
+      <ul class="hist-list" id="listaDepositos">
+        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">💵</div><p>Nenhum depósito realizado</p></li>
+      </ul>
+    </div>
+    <div id="historico">
+      <h3>💸 Saques</h3>
+      <ul class="hist-list" id="listaSaques">
+        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">🏧</div><p>Nenhum saque solicitado</p></li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Investa Agora - Todos os direitos reservados</p>
+  </footer>
+
+  <div class="qr-overlay" id="qrOverlay" onclick="fecharQR(event)">
+    <div class="qr-valor" id="qrOverlayValor">R$ 0,00</div>
+    <img id="qrOverlayImg" src="" alt="QR Code">
+    <div class="qr-info">Escaneie com seu app bancário<br>e pague via Pix</div>
+    <button class="btn-fechar" onclick="fecharQR()">✕ Fechar</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://investa-agora-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function gerarIdUnico() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+    function inicializarUsuario() {
+      let userId = localStorage.getItem("investa_user_id");
+      if (!userId) {
+        userId = gerarIdUnico();
+        localStorage.setItem("investa_user_id", userId);
+        db.ref(`usuarios/${userId}`).set({
+          saldo: 0, totalInvestido: 0, dataCriacao: new Date().toISOString()
+        });
+      }
+      document.getElementById("userIdDisplay").innerText = userId;
+      const agora = new Date();
+      document.getElementById("userDate").innerText = agora.toLocaleDateString("pt-BR") + " " + agora.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+      return userId;
+    }
+    const USER_ID = inicializarUsuario();
+
+    const QR_CODES = {
+      5: { valor: 5, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$5' },
+      10: { valor: 10, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$10' },
+      50: { valor: 50, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$50' }
+    };
+    let qrSelecionado = null;
+    let timerInterval = null;
+    let tempoRestante = 300;
+
+    function selecionarQR(valor) {
+      document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
+      document.getElementById('qr-item-' + valor).classList.add('selected');
+      qrSelecionado = { valor: valor };
+      const qrData = QR_CODES[valor];
+      document.getElementById('qrOverlayImg').src = qrData.imagem;
+      document.getElementById('qrOverlayValor').innerText = 'R$ ' + valor.toFixed(2).replace('.', ',');
+      document.getElementById('qrOverlay').classList.add('show');
+      iniciarTimer();
+    }
+    function fecharQR(e) {
+      if (e && e.target !== e.currentTarget && !e.target.classList.contains('btn-fechar')) return;
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+    function iniciarTimer() {
+      tempoRestante = 300;
+      document.getElementById('timerBox').classList.add('show');
+      document.getElementById('btnConfirmarDeposito').disabled = false;
+      document.getElementById('btnConfirmarDeposito').innerText = '✅ Já Paguei - Confirmar Depósito';
+      document.getElementById('timerDisplay').classList.remove('urgente');
+      if (timerInterval) clearInterval(timerInterval);
+      atualizarTimerDisplay();
+      timerInterval = setInterval(() => {
+        tempoRestante--;
+        atualizarTimerDisplay();
+        if (tempoRestante <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').innerText = '00:00';
+          document.getElementById('timerDisplay').classList.add('urgente');
+          document.getElementById('btnConfirmarDeposito').disabled = true;
+          document.getElementById('btnConfirmarDeposito').innerText = '⏰ Tempo Esgotado';
+          mostrarToast('Tempo esgotado! Selecione o QR Code novamente.', 'erro');
+        }
+      }, 1000);
+    }
+    function atualizarTimerDisplay() {
+      const m = Math.floor(tempoRestante / 60);
+      const s = tempoRestante % 60;
+      document.getElementById('timerDisplay').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      if (tempoRestante <= 60) document.getElementById('timerDisplay').classList.add('urgente');
+      else document.getElementById('timerDisplay').classList.remove('urgente');
+    }
+    function confirmarDeposito() {
+      if (!qrSelecionado) { mostrarToast('Selecione um QR Code primeiro!', 'erro'); return; }
+      if (tempoRestante <= 0) { mostrarToast('Tempo esgotado!', 'erro'); return; }
+      const valor = qrSelecionado.valor;
+      clearInterval(timerInterval);
+      document.getElementById('timerBox').classList.remove('show');
+      const depId = Date.now();
+      db.ref(`depositosPendentes/${USER_ID}/${depId}`).set({
+        valor: valor, status: 'Pendente', data: new Date().toISOString()
+      });
+      db.ref(`historico/${USER_ID}/depositos`).push().set({
+        valor: valor, status: 'Pendente', data: new Date().toISOString()
+      });
+      mostrarToast(`Depósito de R$ ${valor.toFixed(2).replace('.',',')} enviado para aprovação!`, 'sucesso');
+      document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
+      qrSelecionado = null;
+    }
+
+    let notificacoes = [];
+    let notifNaoLidas = 0;
+    function toggleNotif(e) {
+      e.stopPropagation();
+      document.getElementById("notifDropdown").classList.toggle("show");
+      if (document.getElementById("notifDropdown").classList.contains("show")) {
+        notifNaoLidas = 0; atualizarBadge();
+        notificacoes.forEach(n => n.lida = true);
+        renderizarNotificacoes();
+      }
+    }
+    function atualizarBadge() {
+      const badge = document.getElementById("notifBadge");
+      badge.innerText = notifNaoLidas;
+      badge.classList.toggle("show", notifNaoLidas > 0);
+    }
+    function adicionarNotificacao(tipo, titulo, descricao) {
+      notificacoes.unshift({ id: Date.now(), tipo, titulo, descricao, data: new Date().toISOString(), lida: false });
+      notifNaoLidas++;
+      atualizarBadge();
+      renderizarNotificacoes();
+      const tipoToast = tipo === 'aprovado' ? 'sucesso' : tipo === 'rejeitado' ? 'erro' : 'info';
+      mostrarToast(`${titulo}: ${descricao}`, tipoToast);
+    }
+    function renderizarNotificacoes() {
+      const list = document.getElementById("notifList");
+      if (notificacoes.length === 0) { list.innerHTML = '<div class="notif-empty">Nenhuma notificação</div>'; return; }
+      let html = '';
+      notificacoes.slice(0, 20).forEach(n => {
+        const icon = n.tipo === 'aprovado' ? '✅' : n.tipo === 'rejeitado' ? '❌' : n.tipo === 'deposito' ? '💰' : '⏳';
+        const time = new Date(n.data).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        html += `<div class="notif-item ${n.lida ? '' : 'unread'}"><div class="icon ${n.tipo}">${icon}</div><div class="content"><div class="title">${n.titulo}</div><div class="desc">${n.descricao}</div><div class="time">${time}</div></div></div>`;
+      });
+      list.innerHTML = html;
+    }
+    document.addEventListener('click', function(e) {
+      const bell = document.querySelector('.notif-bell');
+      const dropdown = document.getElementById("notifDropdown");
+      if (!bell.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("show");
+    });
+
+    const opcoes = {
+      1: { nome: "Starter", investimento: 5, retorno: 9 },
+      2: { nome: "Pro", investimento: 10, retorno: 15.50 },
+      3: { nome: "Premium", investimento: 50, retorno: 64 }
+    };
+    function mostrarAba(aba, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+      document.getElementById('aba-' + aba).classList.add('active');
+      btn.classList.add('active');
+    }
+    function investir(opcao) {
+      const op = opcoes[opcao];
+      db.ref(`usuarios/${USER_ID}`).once('value').then(snapshot => {
+        const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
+        const saldoAtual = data.saldo || 0;
+        if (saldoAtual < op.investimento) {
+          mostrarToast(`Saldo insuficiente! Precisa de R$ ${op.investimento.toFixed(2).replace('.',',')}`, 'erro');
+          return;
+        }
+        db.ref(`usuarios/${USER_ID}`).update({
+          saldo: saldoAtual - op.investimento + op.retorno,
+          totalInvestido: (data.totalInvestido || 0) + op.investimento
+        });
+        db.ref(`historico/${USER_ID}/investimentos`).push().set({
+          data: new Date().toISOString(), tipo: op.nome, investimento: op.investimento,
+          retorno: op.retorno, status: "Ativo"
+        });
+        mostrarToast(`Investimento realizado! +R$ ${op.retorno.toFixed(2).replace('.',',')}`, 'sucesso');
+      });
+    }
+    function sacar() {
+      const valor = parseFloat(document.getElementById("valorSaque").value);
+      const tipoChave = document.getElementById("tipoChaveSaque").value;
+      const chave = document.getElementById("chaveSaque").value.trim();
+      const nome = document.getElementById("nomeTitular").value.trim();
+      if (!valor || valor <= 0) { mostrarToast("Informe um valor válido!", "erro"); return; }
+      if (valor < 8) { mostrarToast("Mínimo R$ 8,00!", "erro"); return; }
+      if (!chave) { mostrarToast("Informe a chave Pix!", "erro"); return; }
+      if (!nome) { mostrarToast("Informe o nome!", "erro"); return; }
+      db.ref(`usuarios/${USER_ID}`).once('value').then(snapshot => {
+        const data = snapshot.val() || { saldo: 0 };
+        const saldoAtual = data.saldo || 0;
+        if (saldoAtual < valor) { mostrarToast("Saldo insuficiente!", "erro"); return; }
+        db.ref(`usuarios/${USER_ID}/saldo`).set(saldoAtual - valor);
+        db.ref(`saques/${USER_ID}`).push().set({
+          valor, chavePix: chave, tipoChave, nomeTitular: nome,
+          status: 'Pendente', data: new Date().toISOString()
+        });
+        document.getElementById("valorSaque").value = "";
+        document.getElementById("chaveSaque").value = "";
+        document.getElementById("nomeTitular").value = "";
+        mostrarToast(`Saque de R$ ${valor.toFixed(2).replace('.',',')} solicitado!`, 'info');
+        adicionarNotificacao('pendente', 'Saque Enviado', 'Aguardando aprovação do admin.');
+      });
+    }
+    function mostrarToast(msg, tipo) {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      const toast = document.createElement("div");
+      toast.className = `toast ${tipo}`;
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    db.ref(`usuarios/${USER_ID}`).on('value', (snapshot) => {
+      const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
+      const saldo = data.saldo || 0;
+      const totalInv = data.totalInvestido || 0;
+      document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+      document.getElementById("totalInvestido").innerText = "R$ " + totalInv.toFixed(2).replace(".", ",");
+      document.getElementById("totalRendimentos").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+      document.getElementById("saldoSaque").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById("btn-inv" + i);
+        const op = opcoes[i];
+        if (saldo < op.investimento) { btn.innerText = "Saldo Insuficiente"; btn.classList.add("sem-saldo"); }
+        else { btn.innerText = "Investir Agora"; btn.classList.remove("sem-saldo"); }
+      }
+      const btnSaque = document.getElementById("btnSaque");
+      if (saldo < 8) { btnSaque.disabled = true; btnSaque.innerText = "Saldo abaixo do mínimo"; }
+      else { btnSaque.disabled = false; btnSaque.innerText = "Solicitar Saque"; }
+    });
+    db.ref(`depositosPendentes/${USER_ID}`).on('child_changed', (snapshot) => {
+      const dep = snapshot.val();
+      if (dep.status === 'Aprovado') adicionarNotificacao('deposito', 'Depósito Aprovado! 💰', `R$ ${dep.valor.toFixed(2).replace('.',',')} aprovado.`);
+      else if (dep.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Depósito Rejeitado', `R$ ${dep.valor.toFixed(2).replace('.',',')} foi rejeitado.`);
+    });
+    db.ref(`saques/${USER_ID}`).on('child_changed', (snapshot) => {
+      const saque = snapshot.val();
+      if (saque.status === 'Aprovado') adicionarNotificacao('aprovado', 'Saque Aprovado! 🎉', `R$ ${saque.valor.toFixed(2).replace('.',',')} aprovado.`);
+      else if (saque.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Saque Rejeitado', 'Valor devolvido ao saldo.');
+    });
+    db.ref(`historico/${USER_ID}/investimentos`).on('value', (snapshot) => {
+      const div = document.getElementById("listaHistorico");
+      const data = snapshot.val();
+      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">📈</div><p>Nenhum investimento realizado</p></li>'; return; }
+      let html = '';
+      Object.values(data).reverse().forEach(item => {
+        html += `<li><div class="left"><div class="tipo">${item.tipo}</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div></div><div style="text-align:right"><div class="valor pos">+R$ ${item.retorno.toFixed(2).replace('.',',')}</div><div style="font-size:10px;color:#95a5a6">Investido: R$ ${item.investimento.toFixed(2).replace('.',',')}</div></div><div class="status">${item.status}</div></li>`;
+      });
+      div.innerHTML = html;
+    });
+    db.ref(`historico/${USER_ID}/depositos`).on('value', (snapshot) => {
+      const div = document.getElementById("listaDepositos");
+      const data = snapshot.val();
+      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">💵</div><p>Nenhum depósito realizado</p></li>'; return; }
+      let html = '';
+      Object.values(data).reverse().forEach(item => {
+        const sc = item.status === 'Aprovado' ? 'aprovado' : item.status === 'Rejeitado' ? 'rejeitado' : 'pendente';
+        html += `<li class="deposito"><div class="left"><div class="tipo">Depósito</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div></div><div class="valor pos" style="color:#2980b9">+R$ ${item.valor.toFixed(2).replace('.',',')}</div><div class="status ${sc}">${item.status}</div></li>`;
+      });
+      div.innerHTML = html;
+    });
+    db.ref(`saques/${USER_ID}`).on('value', (snapshot) => {
+      const div = document.getElementById("listaSaques");
+      const data = snapshot.val();
+      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">🏧</div><p>Nenhum saque solicitado</p></li>'; return; }
+      let html = '';
+      Object.values(data).reverse().forEach(item => {
+        const sc = item.status === 'Aprovado' ? 'aprovado' : item.status === 'Rejeitado' ? 'rejeitado' : 'pendente';
+        html += `<li class="saque"><div class="left"><div class="tipo">Saque - ${item.tipoChave.toUpperCase()}</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div><div style="font-size:10px;color:#95a5a6">${item.nomeTitular}</div></div><div class="valor neg">-R$ ${item.valor.toFixed(2).replace('.',',')}</div><div class="status ${sc}">${item.status}</div></li>`;
+      });
+      div.innerHTML = html;
+    });
+  </script>
+</body>
+</html>
