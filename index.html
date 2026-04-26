@@ -138,8 +138,7 @@
     .nav-menu button.active { background: #667eea; color: #fff; }
     .tab-content { display: none; padding: 0 16px 20px; }
     .tab-content.active { display: block; }
-
-    /* SALDO BOX */
+    
     #saldo-box {
       max-width: 900px;
       margin: 20px auto;
@@ -158,8 +157,7 @@
     .saldo-item .value { font-size: 28px; font-weight: 700; color: #fff; }
     .saldo-item .value.green { color: #a8e6cf; }
     .saldo-item .value.orange { color: #ffd3b6; }
-
-    /* CONTAINER */
+    
     .container {
       display: flex;
       justify-content: center;
@@ -218,8 +216,7 @@
     button.invest:active { transform: scale(0.98); }
     button.invest.sem-saldo { background: #e74c3c; }
     button.invest:disabled { background: #95a5a6; cursor: not-allowed; }
-
-    /* DEPÓSITO */
+    
     .deposito-area {
       max-width: 500px;
       margin: 20px auto;
@@ -288,8 +285,7 @@
       font-weight: 700;
     }
     .btn-confirmar-deposito:disabled { background: #95a5a6; cursor: not-allowed; }
-
-    /* SAQUE */
+    
     .saque-area {
       max-width: 500px;
       margin: 20px auto;
@@ -337,8 +333,7 @@
       font-weight: 700;
     }
     .btn-saque:disabled { background: #95a5a6; cursor: not-allowed; }
-
-    /* HISTÓRICO / EXTRATO PROFISSIONAL */
+    
     .extrato-container {
       max-width: 900px;
       margin: 20px auto;
@@ -409,7 +404,7 @@
     .resumo-card .value.pos { color: #27ae60; }
     .resumo-card .value.neg { color: #e74c3c; }
     .resumo-card .value.total { color: #667eea; }
-
+    
     .extrato-lista {
       background: #fff;
       border-radius: 16px;
@@ -487,7 +482,7 @@
     .extrato-valor .status.aprovado { background: #d5f5e3; color: #27ae60; }
     .extrato-valor .status.rejeitado { background: #f8d7da; color: #721c24; }
     .extrato-valor .status.ativo { background: #e8eaf6; color: #667eea; }
-
+    
     .extrato-data-header {
       background: #f8f9fa;
       padding: 10px 16px;
@@ -497,11 +492,11 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
+    
     .empty-state { text-align: center; padding: 50px 20px; color: #95a5a6; }
     .empty-state .icon { font-size: 60px; margin-bottom: 16px; opacity: 0.5; }
     .empty-state p { font-size: 16px; }
-
+    
     .qr-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -585,17 +580,17 @@
       </button>
     </div>
   </div>
-
+  
   <div class="notif-dropdown" id="notifDropdown">
     <div class="notif-dropdown-header">🔔 Notificações</div>
     <div id="notifList"><div class="notif-empty">Nenhuma notificação</div></div>
   </div>
-
+  
   <div class="user-bar">
     <span>ID: <strong id="userIdDisplay">---</strong></span>
     <span id="userDate"></span>
   </div>
-
+  
   <div class="nav-menu">
     <button class="active" onclick="mostrarAba('investir', this)">📈 Investir</button>
     <button onclick="mostrarAba('depositar', this)">💰 Depositar</button>
@@ -603,7 +598,6 @@
     <button onclick="mostrarAba('extrato', this)">📋 Extrato</button>
   </div>
 
-  <!-- ABA INVESTIR -->
   <div id="aba-investir" class="tab-content active">
     <div id="saldo-box">
       <div class="saldo-item">
@@ -619,7 +613,7 @@
         <div class="value" id="totalRendimentos">R$ 0,00</div>
       </div>
     </div>
-
+    
     <div class="container">
       <div class="option">
         <div class="badge">POPULAR</div>
@@ -649,12 +643,11 @@
     </div>
   </div>
 
-  <!-- ABA DEPOSITAR -->
   <div id="aba-depositar" class="tab-content">
     <div class="deposito-area">
       <h3>💰 Depositar via Pix</h3>
       <p>Escaneie o QR Code e pague via Pix. Depois confirme o depósito.</p>
-
+      
       <div class="qr-grid">
         <div class="qr-item" onclick="selecionarQR(5)" id="qr-item-5">
           <div class="valor-qr">R$ 5</div>
@@ -672,21 +665,20 @@
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$50" alt="QR R$ 50">
         </div>
       </div>
-
+      
       <div class="timer-box" id="timerBox">
         <div class="timer-label">⏱️ Tempo para confirmar depósito</div>
         <div class="timer-display" id="timerDisplay">05:00</div>
         <div class="timer-info">Escaneie o QR Code, pague e clique em "Já Paguei"</div>
         <button class="btn-confirmar-deposito" id="btnConfirmarDeposito" onclick="confirmarDeposito()">✅ Já Paguei - Confirmar Depósito</button>
       </div>
-
+      
       <p style="font-size: 12px; color: #95a5a6; margin-top: 14px; text-align: center;">
         ⚠️ O depósito será analisado pelo admin antes de ser aprovado.
       </p>
     </div>
   </div>
 
-  <!-- ABA SACAR -->
   <div id="aba-sacar" class="tab-content">
     <div class="saque-area">
       <h3>💸 Solicitar Saque</h3>
@@ -711,10 +703,8 @@
     </div>
   </div>
 
-  <!-- ABA EXTRATO (HISTÓRICO PROFISSIONAL) -->
   <div id="aba-extrato" class="tab-content">
     <div class="extrato-container">
-      <!-- Header com filtros -->
       <div class="extrato-header">
         <h2>📋 Extrato Completo</h2>
         <div class="extrato-filtros">
@@ -738,8 +728,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Lista de transações -->
+      
       <div class="extrato-lista" id="extratoLista">
         <div class="empty-state">
           <div class="icon">📋</div>
@@ -768,38 +757,43 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ========== USUÁRIO ==========
+    // ========== USUÁRIO COM ID APENAS NUMÉRICO ==========
     let USER_ID = null;
     let USER_REF = null;
     let filtroAtual = 'todos';
 
     function gerarIdUnico() {
-      return "USER_" + Math.floor(100000 + Math.random() * 900000).toString();
+      // Apenas números, 6 dígitos
+      return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
     function inicializarUsuario() {
+      // Verifica se já existe um ID salvo no sessionStorage
       let userId = sessionStorage.getItem("investa_session_id");
-
+      
       if (!userId) {
+        // Gera novo ID apenas numérico
         userId = gerarIdUnico();
         sessionStorage.setItem("investa_session_id", userId);
-
+        
+        // Cria usuário no Firebase
         db.ref(`usuarios/${userId}`).set({
           saldo: 0, 
           totalInvestido: 0, 
           dataCriacao: new Date().toISOString()
         });
       }
-
+      
       USER_ID = userId;
       USER_REF = db.ref(`usuarios/${USER_ID}`);
-
+      
+      // Mostra apenas o número
       document.getElementById("userIdDisplay").innerText = USER_ID;
       const agora = new Date();
       document.getElementById("userDate").innerText = agora.toLocaleDateString("pt-BR") + " " + agora.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
-
+      
       iniciarListeners();
-
+      
       return USER_ID;
     }
 
@@ -863,20 +857,19 @@
       clearInterval(timerInterval);
       document.getElementById('timerBox').classList.remove('show');
       const depId = Date.now();
-
+      
       db.ref(`depositosPendentes/${USER_ID}/${depId}`).set({
         valor: valor, status: 'Pendente', data: new Date().toISOString()
       });
       db.ref(`historico/${USER_ID}/depositos`).push().set({
         valor: valor, status: 'Pendente', data: new Date().toISOString()
       });
-
+      
       mostrarToast(`Depósito de R$ ${valor.toFixed(2).replace('.',',')} enviado para aprovação!`, 'sucesso');
       document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
       qrSelecionado = null;
     }
 
-    // ========== NOTIFICAÇÕES ==========
     let notificacoes = [];
     let notifNaoLidas = 0;
     function toggleNotif(e) {
@@ -918,7 +911,6 @@
       if (!bell.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("show");
     });
 
-    // ========== NAVEGAÇÃO ==========
     const opcoes = {
       1: { nome: "Starter", investimento: 5, retorno: 9 },
       2: { nome: "Pro", investimento: 10, retorno: 15.50 },
@@ -930,8 +922,6 @@
       document.getElementById('aba-' + aba).classList.add('active');
       btn.classList.add('active');
     }
-
-    // ========== INVESTIR ==========
     function investir(opcao) {
       const op = opcoes[opcao];
       USER_REF.once('value').then(snapshot => {
@@ -952,8 +942,6 @@
         mostrarToast(`Investimento realizado! +R$ ${op.retorno.toFixed(2).replace('.',',')}`, 'sucesso');
       });
     }
-
-    // ========== SACAR ==========
     function sacar() {
       const valor = parseFloat(document.getElementById("valorSaque").value);
       const tipoChave = document.getElementById("tipoChaveSaque").value;
@@ -979,7 +967,6 @@
         adicionarNotificacao('pendente', 'Saque Enviado', 'Aguardando aprovação do admin.');
       });
     }
-
     function mostrarToast(msg, tipo) {
       const existing = document.querySelector('.toast');
       if (existing) existing.remove();
@@ -1003,14 +990,13 @@
     function renderizarExtrato() {
       const div = document.getElementById('extratoLista');
       let transacoes = [...todasTransacoes];
-
+      
       if (filtroAtual !== 'todos') {
         transacoes = transacoes.filter(t => t.tipo === filtroAtual);
       }
-
-      // Ordenar por data (mais recente primeiro)
+      
       transacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
-
+      
       if (transacoes.length === 0) {
         div.innerHTML = `
           <div class="empty-state">
@@ -1019,34 +1005,29 @@
           </div>`;
         return;
       }
-
+      
       let html = '';
       let dataAtual = '';
-
+      
       transacoes.forEach(t => {
         const data = new Date(t.data);
         const dataStr = data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-
+        
         if (dataStr !== dataAtual) {
           dataAtual = dataStr;
           html += `<div class="extrato-data-header">${dataStr}</div>`;
         }
-
-        const icones = {
-          investimento: '📈',
-          deposito: '💰',
-          saque: '💸'
-        };
-
+        
+        const icones = { investimento: '📈', deposito: '💰', saque: '💸' };
         const cores = {
           investimento: { bg: '#e8eaf6', cor: '#667eea' },
           deposito: { bg: '#d5f5e3', cor: '#27ae60' },
           saque: { bg: '#f8d7da', cor: '#e74c3c' }
         };
-
+        
         const isPositivo = t.tipo === 'deposito' || t.tipo === 'investimento';
         const valorStr = isPositivo ? `+R$ ${t.valor.toFixed(2).replace('.', ',')}` : `-R$ ${t.valor.toFixed(2).replace('.', ',')}`;
-
+        
         let detalhes = '';
         if (t.tipo === 'investimento') {
           detalhes = `<span>📊 ${t.plano || 'Investimento'}</span><span>💵 Investido: R$ ${(t.investimento || 0).toFixed(2).replace('.', ',')}</span>`;
@@ -1055,9 +1036,9 @@
         } else if (t.tipo === 'deposito') {
           detalhes = `<span>💳 Pix</span>`;
         }
-
+        
         const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
+        
         html += `
           <div class="extrato-item">
             <div class="extrato-icon ${t.tipo}" style="background: ${cores[t.tipo].bg};">
@@ -1077,17 +1058,15 @@
           </div>
         `;
       });
-
+      
       div.innerHTML = html;
-
-      // Atualizar resumo
       atualizarResumo();
     }
 
     function atualizarResumo() {
       let entradas = 0;
       let saidas = 0;
-
+      
       todasTransacoes.forEach(t => {
         if (t.tipo === 'deposito' || t.tipo === 'investimento') {
           entradas += t.valor;
@@ -1095,7 +1074,7 @@
           saidas += t.valor;
         }
       });
-
+      
       document.getElementById('resumoEntradas').innerText = 'R$ ' + entradas.toFixed(2).replace('.', ',');
       document.getElementById('resumoSaidas').innerText = 'R$ ' + saidas.toFixed(2).replace('.', ',');
       document.getElementById('resumoTotal').innerText = 'R$ ' + (entradas - saidas).toFixed(2).replace('.', ',');
@@ -1103,8 +1082,7 @@
 
     function carregarExtrato() {
       todasTransacoes = [];
-
-      // Carregar investimentos
+      
       db.ref(`historico/${USER_ID}/investimentos`).once('value').then(snapshot => {
         const data = snapshot.val() || {};
         Object.values(data).forEach(item => {
@@ -1118,8 +1096,7 @@
             data: item.data
           });
         });
-
-        // Carregar depósitos
+        
         return db.ref(`historico/${USER_ID}/depositos`).once('value');
       }).then(snapshot => {
         const data = snapshot.val() || {};
@@ -1132,8 +1109,7 @@
             data: item.data
           });
         });
-
-        // Carregar saques
+        
         return db.ref(`saques/${USER_ID}`).once('value');
       }).then(snapshot => {
         const data = snapshot.val() || {};
@@ -1148,14 +1124,13 @@
             data: item.data
           });
         });
-
+        
         renderizarExtrato();
       });
     }
 
     // ========== LISTENERS EM TEMPO REAL ==========
     function iniciarListeners() {
-      // Saldo
       USER_REF.on('value', (snapshot) => {
         const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
         const saldo = data.saldo || 0;
@@ -1175,21 +1150,18 @@
         else { btnSaque.disabled = false; btnSaque.innerText = "Solicitar Saque"; }
       });
 
-      // Notificações depósitos
       db.ref(`depositosPendentes/${USER_ID}`).on('child_changed', (snapshot) => {
         const dep = snapshot.val();
         if (dep.status === 'Aprovado') adicionarNotificacao('deposito', 'Depósito Aprovado! 💰', `R$ ${dep.valor.toFixed(2).replace('.',',')} aprovado.`);
         else if (dep.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Depósito Rejeitado', `R$ ${dep.valor.toFixed(2).replace('.',',')} foi rejeitado.`);
       });
 
-      // Notificações saques
       db.ref(`saques/${USER_ID}`).on('child_changed', (snapshot) => {
         const saque = snapshot.val();
         if (saque.status === 'Aprovado') adicionarNotificacao('aprovado', 'Saque Aprovado! 🎉', `R$ ${saque.valor.toFixed(2).replace('.',',')} aprovado.`);
         else if (saque.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Saque Rejeitado', 'Valor devolvido ao saldo.');
       });
 
-      // Carregar extrato quando dados mudam
       db.ref(`historico/${USER_ID}`).on('value', () => {
         carregarExtrato();
       });
