@@ -2,757 +2,1282 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Investa Agora</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Investa Agora</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --nubank-purple: #820AD1;
-      --nubank-dark: #1E1E1E;
-      --nubank-card: #2D2D2D;
-      --nubank-text: #FFFFFF;
-      --nubank-gray: #A0A0A0;
-      --nubank-green: #00C853;
-      --nubank-red: #FF5252;
-      --nubank-orange: #FFAB00;
-      --nubank-blue: #2196F3;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--nubank-dark);
-      color: var(--nubank-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
       min-height: 100vh;
+      padding-bottom: 20px;
     }
-
-    /* LOGIN */
-    .login-screen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: var(--nubank-dark);
-    }
-    .login-card {
-      background: var(--nubank-card);
-      border-radius: 20px;
-      padding: 40px;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: 0 10px 40px rgba(130, 10, 209, 0.3);
-    }
-    .login-card .logo {
-      width: 60px;
-      height: 60px;
-      background: var(--nubank-purple);
-      border-radius: 50%;
-      margin: 0 auto 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-    }
-    .login-card h2 {
-      text-align: center;
-      font-size: 22px;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .login-card p {
-      text-align: center;
-      color: var(--nubank-gray);
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    .login-card input {
-      width: 100%;
-      padding: 16px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      color: var(--nubank-text);
-      font-size: 16px;
-      margin-bottom: 12px;
-      transition: all 0.3s;
-    }
-    .login-card input:focus {
-      outline: none;
-      border-color: var(--nubank-purple);
-      background: rgba(255,255,255,0.08);
-    }
-    .login-card input::placeholder { color: var(--nubank-gray); }
-    .login-card button {
-      width: 100%;
-      padding: 16px;
-      background: var(--nubank-purple);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.3s;
-    }
-    .login-card button:hover {
-      background: #9B2DE0;
-      transform: translateY(-2px);
-    }
-    .login-card .erro {
-      color: var(--nubank-red);
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-
-    /* HEADER */
     .app-header {
-      background: var(--nubank-purple);
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 20px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .app-header h1 {
-      font-size: 18px;
-      font-weight: 600;
-    }
-    .app-header .user-info {
+    .app-header-top {
       display: flex;
+      justify-content: space-between;
       align-items: center;
+    }
+    .app-header h1 { font-size: 26px; font-weight: 700; }
+    .app-header p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+    .header-actions {
+      display: flex;
       gap: 10px;
-      font-size: 14px;
+      align-items: center;
     }
-    .btn-sair {
-      background: rgba(255,255,255,0.15);
+    .notif-bell, .support-btn-header {
+      background: rgba(255,255,255,0.2);
       border: none;
       color: #fff;
-      padding: 8px 16px;
-      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       cursor: pointer;
-      font-size: 13px;
-      transition: all 0.3s;
-    }
-    .btn-sair:hover { background: rgba(255,255,255,0.25); }
-
-    /* NAVEGAÇÃO POR ABAS */
-    .nav-tabs {
-      display: flex;
-      gap: 5px;
-      padding: 10px 15px;
-      background: var(--nubank-purple);
-      overflow-x: auto;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .nav-tab {
-      padding: 10px 16px;
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.3s;
+      font-size: 20px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      justify-content: center;
+      position: relative;
     }
-    .nav-tab:hover {
-      background: rgba(255,255,255,0.2);
+    .notif-badge {
+      position: absolute;
+      top: -2px; right: -2px;
+      background: #e74c3c;
       color: #fff;
-    }
-    .nav-tab.active {
-      background: #fff;
-      color: var(--nubank-purple);
-    }
-    .nav-tab .badge {
-      background: var(--nubank-red);
-      color: #fff;
-      padding: 2px 7px;
-      border-radius: 10px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
       font-size: 11px;
       font-weight: 700;
-    }
-
-    /* CONTEÚDO DAS ABAS */
-    .tab-content {
       display: none;
-      padding: 15px;
-      max-width: 1200px;
+      align-items: center;
+      justify-content: center;
+    }
+    .notif-badge.show { display: flex; }
+    .notif-dropdown {
+      position: fixed;
+      top: 75px; right: 10px; left: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+      display: none;
+    }
+    .notif-dropdown.show { display: block; }
+    .notif-dropdown-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #ecf0f1;
+      font-weight: 700;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f2f5;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .notif-item.unread { border-left: 3px solid #27ae60; }
+    .notif-item .icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .notif-item .icon.aprovado { background: #d5f5e3; }
+    .notif-item .icon.rejeitado { background: #f8d7da; }
+    .notif-item .icon.deposito { background: #d6eaf8; }
+    .notif-item .content { flex: 1; }
+    .notif-item .title { font-size: 14px; font-weight: 600; color: #2c3e50; }
+    .notif-item .desc { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+    .notif-item .time { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+    .notif-empty { text-align: center; padding: 30px; color: #95a5a6; }
+    .user-bar {
+      background: #1a252f;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+    .user-bar strong { color: #27ae60; }
+    .nav-menu {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 10px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 68px;
+      z-index: 99;
+    }
+    .nav-menu button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      background: #ecf0f1;
+      color: #2c3e50;
+      transition: all 0.2s;
+    }
+    .nav-menu button.active { background: #667eea; color: #fff; }
+    .tab-content { display: none; padding: 0 16px 20px; }
+    .tab-content.active { display: block; }
+    
+    #saldo-box {
+      max-width: 900px;
+      margin: 20px auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 24px 16px;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 16px;
+      color: #fff;
+    }
+    .saldo-item { text-align: center; }
+    .saldo-item .label { color: rgba(255,255,255,0.8); font-size: 12px; text-transform: uppercase; font-weight: 600; }
+    .saldo-item .value { font-size: 28px; font-weight: 700; color: #fff; }
+    .saldo-item .value.green { color: #a8e6cf; }
+    .saldo-item .value.orange { color: #ffd3b6; }
+    
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 16px;
+      gap: 16px;
+      max-width: 900px;
       margin: 0 auto;
     }
-    .tab-content.active {
-      display: block;
-    }
-
-    /* CARDS DE STATS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .stat-nubank {
-      background: var(--nubank-card);
+    .option {
+      background: #fff;
       border-radius: 16px;
-      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 28px;
+      width: 100%;
+      max-width: 340px;
       position: relative;
       overflow: hidden;
     }
-    .stat-nubank::before {
-      content: '';
+    .option .badge {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--nubank-purple);
-    }
-    .stat-nubank .icon-stat {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-    .stat-nubank .label {
-      color: var(--nubank-gray);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-    .stat-nubank .value {
-      font-size: 22px;
-      font-weight: 700;
-    }
-    .stat-nubank .value.green { color: var(--nubank-green); }
-    .stat-nubank .value.red { color: var(--nubank-red); }
-    .stat-nubank .value.purple { color: var(--nubank-purple); }
-    .stat-nubank .value.orange { color: var(--nubank-orange); }
-    .stat-nubank .value.blue { color: var(--nubank-blue); }
-
-    /* INFO CARD - EXPLICAÇÃO */
-    .info-card {
-      background: linear-gradient(135deg, rgba(130, 10, 209, 0.15), rgba(33, 150, 243, 0.1));
-      border: 1px solid rgba(130, 10, 209, 0.3);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .info-card h3 {
-      font-size: 15px;
-      margin-bottom: 8px;
-      color: var(--nubank-purple);
-    }
-    .info-card p {
-      color: var(--nubank-gray);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .info-card .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .info-card .step {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #e0e0e0;
-    }
-    .info-card .step .num {
-      width: 22px;
-      height: 22px;
-      background: var(--nubank-purple);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    /* SEÇÕES */
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .section-header h2 {
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .section-header .badge-count {
-      background: var(--nubank-red);
+      top: 16px; right: -32px;
+      background: #e74c3c;
       color: #fff;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 12px;
+      padding: 6px 32px;
+      font-size: 11px;
       font-weight: 700;
+      transform: rotate(45deg);
     }
-
-    .nubank-card {
-      background: var(--nubank-card);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    /* TABELA - SCROLL HORIZONTAL */
-    .table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .table-wrapper::-webkit-scrollbar {
-      height: 4px;
-    }
-    .table-wrapper::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.05);
-    }
-    .table-wrapper::-webkit-scrollbar-thumb {
-      background: var(--nubank-purple);
-      border-radius: 2px;
-    }
-    .nubank-table {
-      width: 100%;
-      min-width: 700px;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .nubank-table th {
-      background: rgba(130, 10, 209, 0.15);
-      padding: 12px 10px;
-      text-align: left;
-      color: var(--nubank-gray);
-      font-weight: 500;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-    .nubank-table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      color: #e0e0e0;
-      white-space: nowrap;
-    }
-    .nubank-table tr:hover {
-      background: rgba(255,255,255,0.03);
-    }
-    .nubank-table tr:last-child td { border-bottom: none; }
-
-    .user-id {
-      font-weight: 600;
-      color: var(--nubank-purple);
-      font-family: monospace;
-      font-size: 12px;
-    }
-    .valor-pos { color: var(--nubank-green); font-weight: 600; }
-    .valor-neg { color: var(--nubank-red); font-weight: 600; }
-
-    /* STATUS */
-    .status-nubank {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .status-pendente {
-      background: rgba(255, 171, 0, 0.15);
-      color: var(--nubank-orange);
-    }
-    .status-aprovado {
-      background: rgba(0, 200, 83, 0.15);
-      color: var(--nubank-green);
-    }
-    .status-rejeitado {
-      background: rgba(255, 82, 82, 0.15);
-      color: var(--nubank-red);
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    .status-pendente .status-dot { background: var(--nubank-orange); }
-    .status-aprovado .status-dot { background: var(--nubank-green); animation: none; }
-    .status-rejeitado .status-dot { background: var(--nubank-red); animation: none; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* BOTÕES DE AÇÃO */
-    .acoes-cell {
-      display: flex;
-      gap: 6px;
-    }
-    .btn-nubank {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-    .btn-nubank-aprovar {
-      background: var(--nubank-green);
-      color: #fff;
-    }
-    .btn-nubank-aprovar:hover { background: #00B248; transform: scale(1.05); }
-    .btn-nubank-rejeitar {
-      background: transparent;
-      color: var(--nubank-red);
-      border: 1px solid var(--nubank-red);
-    }
-    .btn-nubank-rejeitar:hover { background: rgba(255, 82, 82, 0.1); }
-
-    /* LEGENDA */
-    .legenda-status {
-      display: flex;
-      gap: 15px;
-      padding: 12px 15px;
-      background: rgba(255,255,255,0.02);
-      border-top: 1px solid rgba(255,255,255,0.05);
-      flex-wrap: wrap;
-    }
-    .legenda-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--nubank-gray);
-    }
-    .legenda-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    /* EMPTY */
-    .empty-nubank {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--nubank-gray);
-    }
-    .empty-nubank .icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-      opacity: 0.5;
-    }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 3000;
-      padding: 20px;
-    }
-    .modal-overlay.show {
-      display: flex;
-    }
-    .modal-content {
-      background: var(--nubank-card);
-      border-radius: 20px;
-      padding: 24px;
-      max-width: 450px;
-      width: 100%;
-      animation: modalIn 0.3s ease;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    @keyframes modalIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .modal-content h3 {
-      font-size: 18px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .modal-content .detail-row {
+    .option h2 { color: #2c3e50; margin-bottom: 16px; font-size: 24px; }
+    .option .info-row {
       display: flex;
       justify-content: space-between;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid #ecf0f1;
+      font-size: 16px;
     }
-    .modal-content .detail-row:last-child {
-      border-bottom: none;
-    }
-    .modal-content .detail-label {
-      color: var(--nubank-gray);
-      font-size: 13px;
-    }
-    .modal-content .detail-value {
-      font-weight: 600;
-      font-size: 13px;
-    }
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .modal-actions button {
-      flex: 1;
-      padding: 14px;
+    .option .info-row:last-child { border-bottom: none; }
+    .option .label { color: #7f8c8d; }
+    .option .value { font-weight: 600; color: #2c3e50; }
+    .option .value.green { color: #27ae60; }
+    .option .value.red { color: #e74c3c; }
+    button.invest {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
       cursor: pointer;
-      transition: all 0.3s;
+      font-size: 17px;
+      font-weight: 700;
+      transition: transform 0.2s;
     }
-    .modal-btn-confirm {
-      background: var(--nubank-green);
-      color: #fff;
+    button.invest:active { transform: scale(0.98); }
+    button.invest.sem-saldo { background: #e74c3c; }
+    button.invest:disabled { background: #95a5a6; cursor: not-allowed; }
+    
+    .deposito-area {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .modal-btn-confirm:hover { background: #00B248; }
-    .modal-btn-cancel {
-      background: rgba(255,255,255,0.1);
-      color: #fff;
+    .deposito-area h3 { color: #2c3e50; margin-bottom: 14px; font-size: 20px; }
+    .deposito-area > p { color: #7f8c8d; font-size: 14px; margin-bottom: 14px; }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
     }
-    .modal-btn-cancel:hover { background: rgba(255,255,255,0.15); }
-    .modal-btn-danger {
-      background: var(--nubank-red);
-      color: #fff;
-    }
-    .modal-btn-danger:hover { background: #E04848; }
-
-    /* TOAST */
-    .toast-nubank {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--nubank-purple);
-      color: #fff;
-      padding: 16px 24px;
+    .qr-item {
+      background: #f8f9fa;
       border-radius: 12px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qr-item:active { transform: scale(0.97); }
+    .qr-item.selected { border-color: #667eea; background: #e8eaf6; }
+    .qr-item .valor-qr { font-size: 20px; font-weight: 700; color: #667eea; }
+    .qr-item .label-qr { font-size: 12px; color: #7f8c8d; margin-top: 4px; }
+    .qr-item img {
+      width: 100%;
+      max-width: 120px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .timer-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+      border: 2px solid #ecf0f1;
+      display: none;
+    }
+    .timer-box.show { display: block; }
+    .timer-box .timer-label { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; }
+    .timer-box .timer-display {
+      font-size: 40px;
+      font-weight: 700;
+      color: #d35400;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer-box .timer-display.urgente { color: #e74c3c; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .timer-box .timer-info { font-size: 13px; color: #7f8c8d; margin-top: 10px; }
+    .btn-confirmar-deposito {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-confirmar-deposito:disabled { background: #95a5a6; cursor: not-allowed; }
+    
+    .saque-area {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .saque-area h3 { color: #2c3e50; margin-bottom: 14px; font-size: 20px; text-align: center; }
+    .info-saque {
+      background: #fff3cd;
+      border-left: 3px solid #ffc107;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #856404;
+    }
+    .saque-area label {
+      display: block;
+      font-size: 13px;
+      color: #2c3e50;
       font-weight: 600;
-      box-shadow: 0 8px 30px rgba(130, 10, 209, 0.4);
-      z-index: 2000;
-      animation: slideUp 0.4s ease;
+      margin-top: 12px;
+      margin-bottom: 5px;
+    }
+    .saque-area input, .saque-area select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ecf0f1;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .saque-area input:focus, .saque-area select:focus { outline: none; border-color: #667eea; }
+    .btn-saque {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .btn-saque:disabled { background: #95a5a6; cursor: not-allowed; }
+    
+    .extrato-container {
+      max-width: 900px;
+      margin: 20px auto;
+    }
+    .extrato-header {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .extrato-header h2 {
+      font-size: 22px;
+      color: #2c3e50;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .toast-nubank.erro { background: var(--nubank-red); }
-    .toast-nubank.sucesso { background: var(--nubank-green); }
+    .extrato-filtros {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .extrato-filtros button {
+      padding: 8px 16px;
+      border: 2px solid #ecf0f1;
+      border-radius: 20px;
+      background: #fff;
+      color: #7f8c8d;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .extrato-filtros button.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .extrato-filtros button:hover:not(.active) {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .extrato-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .resumo-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .resumo-card .label {
+      font-size: 11px;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .resumo-card .value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .resumo-card .value.pos { color: #27ae60; }
+    .resumo-card .value.neg { color: #e74c3c; }
+    .resumo-card .value.total { color: #667eea; }
+    
+    .extrato-lista {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .extrato-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f0f2f5;
+      transition: background 0.2s;
+    }
+    .extrato-item:hover {
+      background: #f8f9fa;
+    }
+    .extrato-item:last-child {
+      border-bottom: none;
+    }
+    .extrato-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 14px;
+      flex-shrink: 0;
+    }
+    .extrato-icon.investimento { background: #e8eaf6; }
+    .extrato-icon.deposito { background: #d5f5e3; }
+    .extrato-icon.saque { background: #f8d7da; }
+    .extrato-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .extrato-info .titulo {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+    .extrato-info .detalhes {
+      font-size: 12px;
+      color: #7f8c8d;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .extrato-info .detalhes span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .extrato-valor {
+      text-align: right;
+      margin-left: 10px;
+    }
+    .extrato-valor .valor {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .extrato-valor .valor.pos { color: #27ae60; }
+    .extrato-valor .valor.neg { color: #e74c3c; }
+    .extrato-valor .status {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-top: 4px;
+      display: inline-block;
+    }
+    .extrato-valor .status.pendente { background: #fff3cd; color: #856404; }
+    .extrato-valor .status.aprovado { background: #d5f5e3; color: #27ae60; }
+    .extrato-valor .status.rejeitado { background: #f8d7da; color: #721c24; }
+    .extrato-valor .status.ativo { background: #e8eaf6; color: #667eea; }
+    
+    .extrato-data-header {
+      background: #f8f9fa;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .empty-state { text-align: center; padding: 50px 20px; color: #95a5a6; }
+    .empty-state .icon { font-size: 60px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state p { font-size: 16px; }
+    
+    .qr-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .qr-overlay.show { display: flex; }
+    .qr-overlay .qr-valor { font-size: 26px; font-weight: 700; color: #667eea; margin-bottom: 14px; }
+    .qr-overlay img { max-width: 280px; width: 100%; border-radius: 14px; margin-bottom: 14px; }
+    .qr-overlay .qr-info { color: #95a5a6; font-size: 14px; margin-bottom: 18px; text-align: center; }
+    .qr-overlay .btn-fechar {
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 3000;
+      animation: slideUp 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast.erro { background: #e74c3c; }
+    .toast.info { background: #2980b9; }
     @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    footer {
+      background: #2c3e50;
+      color: #fff;
+      text-align: center;
+      padding: 14px;
+      margin-top: 20px;
+      font-size: 13px;
     }
 
-    .hidden { display: none !important; }
+    /* ===== INVESTABOT - ASSISTENTE IA ===== */
+    .fab-container {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 1000;
+    }
+    .fab-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .fab-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    }
+    .fab-button.pulse {
+      animation: fabPulse 2s infinite;
+    }
+    @keyframes fabPulse {
+      0%, 100% { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5); }
+      50% { box-shadow: 0 8px 35px rgba(102, 126, 234, 0.8); }
+    }
+    .fab-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #e74c3c;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: badgePulse 1.5s infinite;
+    }
+    .fab-badge.show { display: flex; }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    
+    .chat-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .chat-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .chat-modal {
+      width: 100%;
+      max-width: 450px;
+      height: 80vh;
+      max-height: 700px;
+      background: #1e1e2f;
+      border-radius: 24px 24px 0 0;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+    .chat-overlay.active .chat-modal {
+      transform: translateY(0);
+    }
+    .chat-header-bot {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .chat-header-bot .bot-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .chat-header-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      margin: 0;
+    }
+    .chat-header-info p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+    }
+    .close-chat {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .chat-messages-bot {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+    .msg-bot {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      animation: msgAppear 0.3s ease;
+      word-wrap: break-word;
+    }
+    @keyframes msgAppear {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-bot.bot {
+      background: #2d2d44;
+      color: #e0e0e0;
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+    .msg-bot.user {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+    .typing-ind {
+      display: none;
+      align-self: flex-start;
+      background: #2d2d44;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border-bottom-left-radius: 3px;
+      margin: 0 15px;
+      flex-shrink: 0;
+    }
+    .typing-ind.active { display: flex; gap: 4px; }
+    .typing-ind .dot {
+      width: 7px;
+      height: 7px;
+      background: #667eea;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite;
+    }
+    .typing-ind .dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-ind .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+    .quick-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 15px;
+      background: #1a1a2e;
+      flex-shrink: 0;
+    }
+    .q-btn {
+      background: #2d2d44;
+      color: #a0a0c0;
+      border: 1px solid #3d3d5c;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    .q-btn:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+    .chat-input-area {
+      padding: 12px 15px;
+      background: #1a1a2e;
+      border-top: 1px solid #2d2d44;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .chat-inp {
+      flex: 1;
+      background: #2d2d44;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-inp::placeholder { color: #6b6b8a; }
+    .send-btn-bot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .welcome-msg {
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    .welcome-msg h4 {
+      color: #667eea;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .welcome-msg p {
+      color: #a0a0c0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .hl { color: #667eea; font-weight: 600; }
+    .msg-time {
+      font-size: 9px;
+      color: #6b6b8a;
+      margin-top: 3px;
+      text-align: right;
+    }
+    .msg-bot.bot .msg-time { text-align: left; }
+    .chat-messages-bot::-webkit-scrollbar { width: 5px; }
+    .chat-messages-bot::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages-bot::-webkit-scrollbar-thumb { background: #3d3d5c; border-radius: 3px; }
+
+    /* ===== CHAT DE SUPORTE ===== */
+    .support-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .support-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+    .support-modal {
+      width: 100%;
+      max-width: 450px;
+      height: 85vh;
+      max-height: 700px;
+      background: #1e1e2f;
+      border-radius: 24px 24px 0 0;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+    .support-overlay.active .support-modal {
+      transform: translateY(0);
+    }
+    .support-header {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .support-header .support-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .support-header-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      margin: 0;
+    }
+    .support-header-info p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+    }
+    .close-support {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .support-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+    .msg-support {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      animation: msgAppear 0.3s ease;
+      word-wrap: break-word;
+    }
+    .msg-support.user {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+    .msg-support.admin {
+      background: #2d2d44;
+      color: #e0e0e0;
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+    .msg-support.system {
+      background: rgba(102, 126, 234, 0.1);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      color: #a0a0c0;
+      align-self: center;
+      font-size: 11px;
+      padding: 8px 12px;
+    }
+    .support-input-area {
+      padding: 12px 15px;
+      background: #1a1a2e;
+      border-top: 1px solid #2d2d44;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .support-inp {
+      flex: 1;
+      background: #2d2d44;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+    }
+    .support-inp::placeholder { color: #6b6b8a; }
+    .send-btn-support {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      border: none;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .support-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #e74c3c;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .support-badge.show { display: flex; }
+
+    @media (max-width: 600px) {
+      .option { width: 100%; max-width: none; margin: 0 4px; }
+      #saldo-box { margin: 12px; padding: 20px 12px; }
+      .saldo-item .value { font-size: 24px; }
+      .nav-menu { flex-wrap: wrap; gap: 6px; }
+      .nav-menu button { flex: 1; min-width: 80px; padding: 10px 8px; font-size: 12px; }
+      .qr-grid { grid-template-columns: repeat(1, 1fr); }
+      .app-header h1 { font-size: 22px; }
+      .extrato-resumo { grid-template-columns: 1fr; }
+      .extrato-item { padding: 12px; }
+      .extrato-icon { width: 40px; height: 40px; font-size: 20px; }
+    }
   </style>
 </head>
 <body>
-  <!-- LOGIN -->
-  <div id="telaLogin" class="login-screen">
-    <div class="login-card">
-      <div class="logo">🔐</div>
-      <h2>Painel Admin</h2>
-      <p>Investa Agora</p>
-      <input type="text" id="adminUser" placeholder="Usuário">
-      <input type="password" id="adminPass" placeholder="Senha" onkeypress="if(event.key==='Enter')fazerLogin()">
-      <button onclick="fazerLogin()">Entrar</button>
-      <p id="erroLogin" class="erro"></p>
-    </div>
-  </div>
-
-  <!-- PAINEL -->
-  <div id="painelAdmin" class="hidden">
-    <div class="app-header">
+  <div class="app-header">
+    <div class="app-header-top">
       <div>
-        <h1>👤 Painel Administrativo</h1>
+        <h1>Investa Agora</h1>
+        <p>Plataforma de Investimentos Inteligentes</p>
       </div>
-      <div class="user-info">
-        <span>Admin</span>
-        <button class="btn-sair" onclick="logout()">Sair</button>
-      </div>
-    </div>
-
-    <!-- NAVEGAÇÃO POR ABAS -->
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="mostrarAba('dashboard')" id="tab-dashboard">
-        📊 Dashboard
-      </button>
-      <button class="nav-tab" onclick="mostrarAba('saques')" id="tab-saques">
-        💸 Saques <span class="badge" id="navBadgeSaques">0</span>
-      </button>
-      <button class="nav-tab" onclick="mostrarAba('depositos')" id="tab-depositos">
-        💰 Depósitos <span class="badge" id="navBadgeDepositos">0</span>
-      </button>
-      <button class="nav-tab" onclick="mostrarAba('usuarios')" id="tab-usuarios">
-        👥 Usuários
-      </button>
-    </div>
-
-    <!-- ABA DASHBOARD -->
-    <div id="aba-dashboard" class="tab-content active">
-      <div class="stats-grid">
-        <div class="stat-nubank">
-          <div class="icon-stat">⏳</div>
-          <div class="label">Saques Pendentes</div>
-          <div class="value red" id="statPendentes">0</div>
-        </div>
-        <div class="stat-nubank">
-          <div class="icon-stat">👥</div>
-          <div class="label">Total Usuários</div>
-          <div class="value purple" id="statUsuarios">0</div>
-        </div>
-        <div class="stat-nubank">
-          <div class="icon-stat">💵</div>
-          <div class="label">Total Investido</div>
-          <div class="value green" id="statInvestido">R$ 0,00</div>
-        </div>
-        <div class="stat-nubank">
-          <div class="icon-stat">💸</div>
-          <div class="label">Total em Saques</div>
-          <div class="value orange" id="statSaques">R$ 0,00</div>
-        </div>
-        <div class="stat-nubank">
-          <div class="icon-stat">💰</div>
-          <div class="label">Depósitos Pendentes</div>
-          <div class="value blue" id="statDepPendentes">0</div>
-        </div>
-        <div class="stat-nubank">
-          <div class="icon-stat">📈</div>
-          <div class="label">Saldo Total em Contas</div>
-          <div class="value green" id="statSaldoTotal">R$ 0,00</div>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <h3>⚡ Como usar o painel</h3>
-        <p>Navegue pelas abas acima para gerenciar saques, depósitos e usuários.</p>
-        <div class="steps">
-          <div class="step"><span class="num">1</span> Aba "Saques" → Aprovar/Rejeitar saques pendentes</div>
-          <div class="step"><span class="num">2</span> Aba "Depósitos" → Confirmar pagamentos recebidos</div>
-          <div class="step"><span class="num">3</span> Aba "Usuários" → Ver todos os usuários cadastrados</div>
-        </div>
+      <div class="header-actions">
+        <button class="support-btn-header" onclick="toggleSupport()" title="Suporte">
+          💬
+          <span class="support-badge" id="supportBadgeHeader">0</span>
+        </button>
+        <button class="notif-bell" onclick="toggleNotif(event)">
+          🔔
+          <span class="notif-badge" id="notifBadge">0</span>
+        </button>
       </div>
     </div>
+  </div>
+  
+  <div class="notif-dropdown" id="notifDropdown">
+    <div class="notif-dropdown-header">🔔 Notificações</div>
+    <div id="notifList"><div class="notif-empty">Nenhuma notificação</div></div>
+  </div>
+  
+  <div class="user-bar">
+    <span>ID: <strong id="userIdDisplay">---</strong></span>
+    <span id="userDate"></span>
+  </div>
+  
+  <div class="nav-menu">
+    <button class="active" onclick="mostrarAba('investir', this)">📈 Investir</button>
+    <button onclick="mostrarAba('depositar', this)">💰 Depositar</button>
+    <button onclick="mostrarAba('sacar', this)">💸 Sacar</button>
+    <button onclick="mostrarAba('extrato', this)">📋 Extrato</button>
+  </div>
 
-    <!-- ABA SAQUES -->
-    <div id="aba-saques" class="tab-content">
-      <div class="info-card">
-        <h3>💡 Gerenciamento de Saques</h3>
-        <p>Aqui você aprova ou rejeita os pedidos de saque dos usuários. Ao aprovar, o saque é marcado como pago. Ao rejeitar, o valor volta para o saldo do usuário automaticamente.</p>
-        <div class="steps">
-          <div class="step"><span class="num">1</span> Veja os saques pendentes na lista abaixo</div>
-          <div class="step"><span class="num">2</span> Clique em "Aprovar" para confirmar o pagamento Pix</div>
-          <div class="step"><span class="num">3</span> Clique em "Rejeitar" para devolver o valor ao usuário</div>
-        </div>
+  <div id="aba-investir" class="tab-content active">
+    <div id="saldo-box">
+      <div class="saldo-item">
+        <div class="label">Saldo Disponível</div>
+        <div class="value green" id="saldo">R$ 0,00</div>
       </div>
-
-      <div class="section-header">
-        <h2>⏳ Saques Pendentes</h2>
-        <span class="badge-count" id="badgePendentes">0</span>
+      <div class="saldo-item">
+        <div class="label">Total Investido</div>
+        <div class="value orange" id="totalInvestido">R$ 0,00</div>
       </div>
-      <div class="nubank-card" id="listaPendentes">
-        <div class="empty-nubank">
-          <div class="icon">📭</div>
-          <p>Nenhum saque pendente</p>
-          <p style="font-size: 12px; margin-top: 8px;">Quando um usuário solicitar saque, ele aparecerá aqui</p>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <h2>📋 Histórico de Saques</h2>
-      </div>
-      <div class="nubank-card" id="listaTodosSaques">
-        <div class="empty-nubank">
-          <div class="icon">📊</div>
-          <p>Nenhum saque registrado</p>
-        </div>
+      <div class="saldo-item">
+        <div class="label">Total em Rendimentos</div>
+        <div class="value" id="totalRendimentos">R$ 0,00</div>
       </div>
     </div>
-
-    <!-- ABA DEPÓSITOS -->
-    <div id="aba-depositos" class="tab-content">
-      <div class="info-card">
-        <h3>💡 Gerenciamento de Depósitos</h3>
-        <p>Aqui você confirma os pagamentos que os usuários fizeram via Pix. Ao aprovar, o valor é creditado no saldo deles. Verifique se o pagamento realmente caiu antes de aprovar.</p>
-        <div class="steps">
-          <div class="step"><span class="num">1</span> Verifique se o pagamento caiu na conta</div>
-          <div class="step"><span class="num">2</span> Clique em "Aprovar" para creditar o valor</div>
-          <div class="step"><span class="num">3</span> Clique em "Rejeitar" se o pagamento não foi identificado</div>
-        </div>
+    
+    <div class="container">
+      <div class="option">
+        <div class="badge">POPULAR</div>
+        <h2>Starter</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 5,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 3,00</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">3 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 9,00</span></div>
+        <button class="invest" id="btn-inv1" onclick="investir(1)">Investir Agora</button>
       </div>
-
-      <div class="section-header">
-        <h2>💰 Depósitos Pendentes</h2>
-        <span class="badge-count" id="badgeDepPendentes">0</span>
+      <div class="option">
+        <h2>Pro</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 10,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 3,10</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">5 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 15,50</span></div>
+        <button class="invest" id="btn-inv2" onclick="investir(2)">Investir Agora</button>
       </div>
-      <div class="nubank-card" id="listaDepositosPendentes">
-        <div class="empty-nubank">
-          <div class="icon">💵</div>
-          <p>Nenhum depósito pendente</p>
-          <p style="font-size: 12px; margin-top: 8px;">Quando um usuário fizer depósito, ele aparecerá aqui</p>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <h2>📋 Histórico de Depósitos</h2>
-      </div>
-      <div class="nubank-card" id="listaTodosDepositos">
-        <div class="empty-nubank">
-          <div class="icon">📊</div>
-          <p>Nenhum depósito registrado</p>
-        </div>
+      <div class="option">
+        <h2>Premium</h2>
+        <div class="info-row"><span class="label">Investimento</span><span class="value red">R$ 50,00</span></div>
+        <div class="info-row"><span class="label">Rendimento Diário</span><span class="value green">R$ 8,00</span></div>
+        <div class="info-row"><span class="label">Prazo</span><span class="value">8 dias</span></div>
+        <div class="info-row"><span class="label">Retorno Total</span><span class="value green">R$ 64,00</span></div>
+        <button class="invest" id="btn-inv3" onclick="investir(3)">Investir Agora</button>
       </div>
     </div>
+  </div>
 
-    <!-- ABA USUÁRIOS -->
-    <div id="aba-usuarios" class="tab-content">
-      <div class="info-card">
-        <h3>💡 Lista de Usuários</h3>
-        <p>Todos os usuários cadastrados no app. Você pode ver o saldo de cada um, total investido e data de criação da conta.</p>
+  <div id="aba-depositar" class="tab-content">
+    <div class="deposito-area">
+      <h3>💰 Depositar via Pix</h3>
+      <p>Escaneie o QR Code e pague via Pix. Depois confirme o depósito.</p>
+      
+      <div class="qr-grid">
+        <div class="qr-item" onclick="selecionarQR(5)" id="qr-item-5">
+          <div class="valor-qr">R$ 5</div>
+          <div class="label-qr">Starter</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$5" alt="QR R$ 5">
+        </div>
+        <div class="qr-item" onclick="selecionarQR(10)" id="qr-item-10">
+          <div class="valor-qr">R$ 10</div>
+          <div class="label-qr">Pro</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$10" alt="QR R$ 10">
+        </div>
+        <div class="qr-item" onclick="selecionarQR(50)" id="qr-item-50">
+          <div class="valor-qr">R$ 50</div>
+          <div class="label-qr">Premium</div>
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$50" alt="QR R$ 50">
+        </div>
       </div>
+      
+      <div class="timer-box" id="timerBox">
+        <div class="timer-label">⏱️ Tempo para confirmar depósito</div>
+        <div class="timer-display" id="timerDisplay">05:00</div>
+        <div class="timer-info">Escaneie o QR Code, pague e clique em "Já Paguei"</div>
+        <button class="btn-confirmar-deposito" id="btnConfirmarDeposito" onclick="confirmarDeposito()">✅ Já Paguei - Confirmar Depósito</button>
+      </div>
+      
+      <p style="font-size: 12px; color: #95a5a6; margin-top: 14px; text-align: center;">
+        ⚠️ O depósito será analisado pelo admin antes de ser aprovado.
+      </p>
+    </div>
+  </div>
 
-      <div class="section-header">
-        <h2>👥 Todos os Usuários</h2>
+  <div id="aba-sacar" class="tab-content">
+    <div class="saque-area">
+      <h3>💸 Solicitar Saque</h3>
+      <div class="info-saque">
+        📌 Saque mínimo: <strong>R$ 8,00</strong><br>
+        Saldo: <strong id="saldoSaque">R$ 0,00</strong>
       </div>
-      <div class="nubank-card" id="listaUsuarios">
-        <div class="empty-nubank">
-          <div class="icon">👤</div>
-          <p>Nenhum usuário registrado</p>
+      <label>Valor do Saque (R$)</label>
+      <input type="number" id="valorSaque" placeholder="0,00" min="8" step="0.01">
+      <label>Tipo de Chave Pix</label>
+      <select id="tipoChaveSaque">
+        <option value="cpf">CPF</option>
+        <option value="email">E-mail</option>
+        <option value="telefone">Telefone</option>
+        <option value="aleatoria">Chave Aleatória</option>
+      </select>
+      <label>Chave Pix</label>
+      <input type="text" id="chaveSaque" placeholder="Digite sua chave Pix">
+      <label>Nome do Titular</label>
+      <input type="text" id="nomeTitular" placeholder="Nome completo">
+      <button class="btn-saque" id="btnSaque" onclick="sacar()">Solicitar Saque</button>
+    </div>
+  </div>
+
+  <div id="aba-extrato" class="tab-content">
+    <div class="extrato-container">
+      <div class="extrato-header">
+        <h2>📋 Extrato Completo</h2>
+        <div class="extrato-filtros">
+          <button class="active" onclick="filtrarExtrato('todos', this)">Todos</button>
+          <button onclick="filtrarExtrato('investimento', this)">📈 Investimentos</button>
+          <button onclick="filtrarExtrato('deposito', this)">💰 Depósitos</button>
+          <button onclick="filtrarExtrato('saque', this)">💸 Saques</button>
+        </div>
+        <div class="extrato-resumo">
+          <div class="resumo-card">
+            <div class="label">Total Entradas</div>
+            <div class="value pos" id="resumoEntradas">R$ 0,00</div>
+          </div>
+          <div class="resumo-card">
+            <div class="label">Total Saídas</div>
+            <div class="value neg" id="resumoSaidas">R$ 0,00</div>
+          </div>
+          <div class="resumo-card">
+            <div class="label">Saldo Movimentado</div>
+            <div class="value total" id="resumoTotal">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="extrato-lista" id="extratoLista">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>Nenhuma transação registrada</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE CONFIRMAÇÃO -->
-  <div id="modalConfirm" class="modal-overlay">
-    <div class="modal-content">
-      <h3 id="modalTitle">Confirmar Ação</h3>
-      <div id="modalBody"></div>
-      <div class="modal-actions">
-        <button class="modal-btn-cancel" onclick="fecharModal()">Cancelar</button>
-        <button id="modalBtnConfirm" class="modal-btn-confirm">Confirmar</button>
+  <footer>
+    <p>© 2026 Investa Agora - Todos os direitos reservados</p>
+  </footer>
+
+  <div class="qr-overlay" id="qrOverlay" onclick="fecharQR(event)">
+    <div class="qr-valor" id="qrOverlayValor">R$ 0,00</div>
+    <img id="qrOverlayImg" src="" alt="QR Code">
+    <div class="qr-info">Escaneie com seu app bancário<br>e pague via Pix</div>
+    <button class="btn-fechar" onclick="fecharQR()">✕ Fechar</button>
+  </div>
+
+  <!-- ===== INVESTABOT - ASSISTENTE IA ===== -->
+  <div class="fab-container">
+    <button class="fab-button pulse" id="fabBot" onclick="toggleChat()">
+      🤖
+      <span class="fab-badge" id="fabBadge">1</span>
+    </button>
+  </div>
+  
+  <div class="chat-overlay" id="chatOverlay" onclick="closeChatOverlay(event)">
+    <div class="chat-modal" onclick="event.stopPropagation()">
+      <div class="chat-header-bot">
+        <div class="bot-avatar">🤖</div>
+        <div class="chat-header-info">
+          <h3>InvestaBot</h3>
+          <p>Assistente Virtual Inteligente</p>
+        </div>
+        <button class="close-chat" onclick="toggleChat()">✕</button>
+      </div>
+      
+      <div class="chat-messages-bot" id="chatMessagesBot">
+        <div class="welcome-msg">
+          <h4>👋 Olá! Sou o InvestaBot</h4>
+          <p>Sou a inteligência artificial do <span class="hl">Investa Agora</span>! Posso te ajudar com dúvidas sobre investimentos, saques, depósitos e muito mais. Também posso responder perguntas gerais! Digite sua pergunta ou clique em uma opção abaixo!</p>
+        </div>
+      </div>
+      
+      <div class="typing-ind" id="typingInd">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      
+      <div class="quick-btns" id="quickBtns">
+        <button class="q-btn" onclick="quickMsg('Como funciona?')">Como funciona?</button>
+        <button class="q-btn" onclick="quickMsg('Como investir?')">Como investir?</button>
+        <button class="q-btn" onclick="quickMsg('Como sacar?')">Como sacar?</button>
+        <button class="q-btn" onclick="quickMsg('Como depositar?')">Como depositar?</button>
+        <button class="q-btn" onclick="quickMsg('Quanto ganho?')">Quanto ganho?</button>
+        <button class="q-btn" onclick="quickMsg('É seguro?')">É seguro?</button>
+      </div>
+      
+      <div class="chat-input-area">
+        <input type="text" class="chat-inp" id="chatInp" placeholder="Digite sua pergunta..." onkeypress="if(event.key==='Enter')sendChatMsg()">
+        <button class="send-btn-bot" onclick="sendChatMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHAT DE SUPORTE ===== -->
+  <div class="support-overlay" id="supportOverlay" onclick="closeSupportOverlay(event)">
+    <div class="support-modal" onclick="event.stopPropagation()">
+      <div class="support-header">
+        <div class="support-avatar">👨‍💼</div>
+        <div class="support-header-info">
+          <h3>Suporte Investa Agora</h3>
+          <p>Chat direto com o Admin</p>
+        </div>
+        <button class="close-support" onclick="toggleSupport()">✕</button>
+      </div>
+      
+      <div class="support-messages" id="supportMessages">
+        <div class="welcome-msg">
+          <h4 style="color:#27ae60;">💬 Bem-vindo ao Suporte!</h4>
+          <p>Envie sua mensagem para o administrador. Ele responderá o mais breve possível. Horário de atendimento: 24h!</p>
+        </div>
+      </div>
+      
+      <div class="support-input-area">
+        <input type="text" class="support-inp" id="supportInp" placeholder="Digite sua mensagem..." onkeypress="if(event.key==='Enter')sendSupportMsg()">
+        <button class="send-btn-support" onclick="sendSupportMsg()">➤</button>
       </div>
     </div>
   </div>
@@ -762,559 +1287,879 @@
     const firebaseConfig = {
       databaseURL: "https://investa-agora-default-rtdb.firebaseio.com/"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ========== LOGIN ==========
-    const ADMIN_USER = "admin";
-    const ADMIN_PASS = "admin123";
-    let adminLogado = false;
+    // ========== USUÁRIO COM ID APENAS NUMÉRICO ==========
+    let USER_ID = null;
+    let USER_REF = null;
+    let filtroAtual = 'todos';
 
-    function fazerLogin() {
-      const user = document.getElementById("adminUser").value;
-      const pass = document.getElementById("adminPass").value;
+    function gerarIdUnico() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
 
-      if (user === ADMIN_USER && pass === ADMIN_PASS) {
-        adminLogado = true;
-        document.getElementById("telaLogin").classList.add("hidden");
-        document.getElementById("painelAdmin").classList.remove("hidden");
-        carregarDados();
-      } else {
-        document.getElementById("erroLogin").innerText = "Usuário ou senha incorretos!";
+    function inicializarUsuario() {
+      let userId = sessionStorage.getItem("investa_session_id");
+      
+      if (!userId) {
+        userId = gerarIdUnico();
+        sessionStorage.setItem("investa_session_id", userId);
+        
+        db.ref(`usuarios/${userId}`).set({
+          saldo: 0, 
+          totalInvestido: 0, 
+          dataCriacao: new Date().toISOString()
+        });
+      }
+      
+      USER_ID = userId;
+      USER_REF = db.ref(`usuarios/${USER_ID}`);
+      
+      document.getElementById("userIdDisplay").innerText = USER_ID;
+      const agora = new Date();
+      document.getElementById("userDate").innerText = agora.toLocaleDateString("pt-BR") + " " + agora.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+      
+      iniciarListeners();
+      iniciarChatSuporte();
+      
+      return USER_ID;
+    }
+
+    inicializarUsuario();
+
+    const QR_CODES = {
+      5: { valor: 5, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$5' },
+      10: { valor: 10, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$10' },
+      50: { valor: 50, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$50' }
+    };
+    let qrSelecionado = null;
+    let timerInterval = null;
+    let tempoRestante = 300;
+
+    function selecionarQR(valor) {
+      document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
+      document.getElementById('qr-item-' + valor).classList.add('selected');
+      qrSelecionado = { valor: valor };
+      const qrData = QR_CODES[valor];
+      document.getElementById('qrOverlayImg').src = qrData.imagem;
+      document.getElementById('qrOverlayValor').innerText = 'R$ ' + valor.toFixed(2).replace('.', ',');
+      document.getElementById('qrOverlay').classList.add('show');
+      iniciarTimer();
+    }
+    function fecharQR(e) {
+      if (e && e.target !== e.currentTarget && !e.target.classList.contains('btn-fechar')) return;
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+    function iniciarTimer() {
+      tempoRestante = 300;
+      document.getElementById('timerBox').classList.add('show');
+      document.getElementById('btnConfirmarDeposito').disabled = false;
+      document.getElementById('btnConfirmarDeposito').innerText = '✅ Já Paguei - Confirmar Depósito';
+      document.getElementById('timerDisplay').classList.remove('urgente');
+      if (timerInterval) clearInterval(timerInterval);
+      atualizarTimerDisplay();
+      timerInterval = setInterval(() => {
+        tempoRestante--;
+        atualizarTimerDisplay();
+        if (tempoRestante <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').innerText = '00:00';
+          document.getElementById('timerDisplay').classList.add('urgente');
+          document.getElementById('btnConfirmarDeposito').disabled = true;
+          document.getElementById('btnConfirmarDeposito').innerText = '⏰ Tempo Esgotado';
+          mostrarToast('Tempo esgotado! Selecione o QR Code novamente.', 'erro');
+        }
+      }, 1000);
+    }
+    function atualizarTimerDisplay() {
+      const m = Math.floor(tempoRestante / 60);
+      const s = tempoRestante % 60;
+      document.getElementById('timerDisplay').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      if (tempoRestante <= 60) document.getElementById('timerDisplay').classList.add('urgente');
+      else document.getElementById('timerDisplay').classList.remove('urgente');
+    }
+    function confirmarDeposito() {
+      if (!qrSelecionado) { mostrarToast('Selecione um QR Code primeiro!', 'erro'); return; }
+      if (tempoRestante <= 0) { mostrarToast('Tempo esgotado!', 'erro'); return; }
+      const valor = qrSelecionado.valor;
+      clearInterval(timerInterval);
+      document.getElementById('timerBox').classList.remove('show');
+      const depId = Date.now();
+      
+      db.ref(`depositosPendentes/${USER_ID}/${depId}`).set({
+        valor: valor, status: 'Pendente', data: new Date().toISOString()
+      });
+      db.ref(`historico/${USER_ID}/depositos`).push().set({
+        valor: valor, status: 'Pendente', data: new Date().toISOString()
+      });
+      
+      mostrarToast(`Depósito de R$ ${valor.toFixed(2).replace('.',',')} enviado para aprovação!`, 'sucesso');
+      document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
+      qrSelecionado = null;
+    }
+
+    let notificacoes = [];
+    let notifNaoLidas = 0;
+    function toggleNotif(e) {
+      e.stopPropagation();
+      document.getElementById("notifDropdown").classList.toggle("show");
+      if (document.getElementById("notifDropdown").classList.contains("show")) {
+        notifNaoLidas = 0; atualizarBadge();
+        notificacoes.forEach(n => n.lida = true);
+        renderizarNotificacoes();
       }
     }
-
-    function logout() {
-      adminLogado = false;
-      document.getElementById("telaLogin").classList.remove("hidden");
-      document.getElementById("painelAdmin").classList.add("hidden");
-      document.getElementById("adminUser").value = "";
-      document.getElementById("adminPass").value = "";
-      document.getElementById("erroLogin").innerText = "";
+    function atualizarBadge() {
+      const badge = document.getElementById("notifBadge");
+      badge.innerText = notifNaoLidas;
+      badge.classList.toggle("show", notifNaoLidas > 0);
     }
+    function adicionarNotificacao(tipo, titulo, descricao) {
+      notificacoes.unshift({ id: Date.now(), tipo, titulo, descricao, data: new Date().toISOString(), lida: false });
+      notifNaoLidas++;
+      atualizarBadge();
+      renderizarNotificacoes();
+      const tipoToast = tipo === 'aprovado' ? 'sucesso' : tipo === 'rejeitado' ? 'erro' : 'info';
+      mostrarToast(`${titulo}: ${descricao}`, tipoToast);
+    }
+    function renderizarNotificacoes() {
+      const list = document.getElementById("notifList");
+      if (notificacoes.length === 0) { list.innerHTML = '<div class="notif-empty">Nenhuma notificação</div>'; return; }
+      let html = '';
+      notificacoes.slice(0, 20).forEach(n => {
+        const icon = n.tipo === 'aprovado' ? '✅' : n.tipo === 'rejeitado' ? '❌' : n.tipo === 'deposito' ? '💰' : '⏳';
+        const time = new Date(n.data).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        html += `<div class="notif-item ${n.lida ? '' : 'unread'}"><div class="icon ${n.tipo}">${icon}</div><div class="content"><div class="title">${n.titulo}</div><div class="desc">${n.descricao}</div><div class="time">${time}</div></div></div>`;
+      });
+      list.innerHTML = html;
+    }
+    document.addEventListener('click', function(e) {
+      const bell = document.querySelector('.notif-bell');
+      const dropdown = document.getElementById("notifDropdown");
+      if (!bell.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("show");
+    });
 
-    // ========== NAVEGAÇÃO ==========
-    function mostrarAba(aba) {
+    const opcoes = {
+      1: { nome: "Starter", investimento: 5, retorno: 9 },
+      2: { nome: "Pro", investimento: 10, retorno: 15.50 },
+      3: { nome: "Premium", investimento: 50, retorno: 64 }
+    };
+    function mostrarAba(aba, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
       document.getElementById('aba-' + aba).classList.add('active');
-      document.getElementById('tab-' + aba).classList.add('active');
+      btn.classList.add('active');
     }
-
-    // ========== DADOS ==========
-    function carregarDados() {
-      db.ref('saques').on('value', (snapshot) => {
-        const saques = snapshot.val() || {};
-        renderizarSaques(saques);
-        atualizarStatsSaques(saques);
-      });
-
-      db.ref('usuarios').on('value', (snapshot) => {
-        const usuarios = snapshot.val() || {};
-        renderizarUsuarios(usuarios);
-        document.getElementById("statUsuarios").innerText = Object.keys(usuarios).length;
-
-        let totalInvestido = 0;
-        let saldoTotal = 0;
-        Object.values(usuarios).forEach(u => {
-          totalInvestido += (u.totalInvestido || 0);
-          saldoTotal += (u.saldo || 0);
+    function investir(opcao) {
+      const op = opcoes[opcao];
+      USER_REF.once('value').then(snapshot => {
+        const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
+        const saldoAtual = data.saldo || 0;
+        if (saldoAtual < op.investimento) {
+          mostrarToast(`Saldo insuficiente! Precisa de R$ ${op.investimento.toFixed(2).replace('.',',')}`, 'erro');
+          return;
+        }
+        USER_REF.update({
+          saldo: saldoAtual - op.investimento + op.retorno,
+          totalInvestido: (data.totalInvestido || 0) + op.investimento
         });
-        document.getElementById("statInvestido").innerText = "R$ " + totalInvestido.toFixed(2).replace(".", ",");
-        document.getElementById("statSaldoTotal").innerText = "R$ " + saldoTotal.toFixed(2).replace(".", ",");
-      });
-
-      db.ref('depositosPendentes').on('value', (snapshot) => {
-        const depositos = snapshot.val() || {};
-        renderizarDepositos(depositos);
-        atualizarStatsDepositos(depositos);
-      });
-    }
-
-    // ========== RENDERIZAR SAQUES ==========
-    function renderizarSaques(saques) {
-      let pendentesHTML = "";
-      let todosHTML = "";
-      let countPendentes = 0;
-      let totalSaques = 0;
-
-      Object.entries(saques).forEach(([userId, userSaques]) => {
-        Object.entries(userSaques).forEach(([saqueId, saque]) => {
-          totalSaques += saque.valor;
-
-          const row = criarRowSaque(userId, saqueId, saque);
-
-          todosHTML += row;
-          if (saque.status === 'Pendente') {
-            pendentesHTML += row;
-            countPendentes++;
-          }
+        db.ref(`historico/${USER_ID}/investimentos`).push().set({
+          data: new Date().toISOString(), tipo: op.nome, investimento: op.investimento,
+          retorno: op.retorno, status: "Ativo"
         });
+        mostrarToast(`Investimento realizado! +R$ ${op.retorno.toFixed(2).replace('.',',')}`, 'sucesso');
       });
-
-      document.getElementById("statPendentes").innerText = countPendentes;
-      document.getElementById("badgePendentes").innerText = countPendentes;
-      document.getElementById("navBadgeSaques").innerText = countPendentes;
-      document.getElementById("statSaques").innerText = "R$ " + totalSaques.toFixed(2).replace(".", ",");
-
-      // Pendentes
-      const divPendentes = document.getElementById("listaPendentes");
-      if (pendentesHTML === "") {
-        divPendentes.innerHTML = `
-          <div class="empty-nubank">
-            <div class="icon">📭</div>
-            <p>Nenhum saque pendente</p>
-            <p style="font-size: 12px; margin-top: 8px;">Quando um usuário solicitar saque, ele aparecerá aqui</p>
-          </div>`;
-      } else {
-        divPendentes.innerHTML = `
-          <div class="table-wrapper">
-            <table class="nubank-table">
-              <thead>
-                <tr>
-                  <th>ID Usuário</th>
-                  <th>Valor</th>
-                  <th>Tipo Chave</th>
-                  <th>Chave Pix</th>
-                  <th>Nome Titular</th>
-                  <th>Data</th>
-                  <th>Status</th>
-                  <th style="min-width: 180px;">Ações</th>
-                </tr>
-              </thead>
-              <tbody>${pendentesHTML}</tbody>
-            </table>
-          </div>`;
-      }
-
-      // Todos
-      const divTodos = document.getElementById("listaTodosSaques");
-      if (todosHTML === "") {
-        divTodos.innerHTML = `
-          <div class="empty-nubank">
-            <div class="icon">📊</div>
-            <p>Nenhum saque registrado</p>
-          </div>`;
-      } else {
-        divTodos.innerHTML = `
-          <div class="table-wrapper">
-            <table class="nubank-table">
-              <thead>
-                <tr>
-                  <th>ID Usuário</th>
-                  <th>Valor</th>
-                  <th>Tipo Chave</th>
-                  <th>Chave Pix</th>
-                  <th>Nome Titular</th>
-                  <th>Data</th>
-                  <th>Status</th>
-                  <th style="min-width: 180px;">Ações</th>
-                </tr>
-              </thead>
-              <tbody>${todosHTML}</tbody>
-            </table>
-          </div>
-          <div class="legenda-status">
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-orange)"></div> Pendente = Aguardando aprovação</div>
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-green)"></div> Aprovado = Pagamento realizado</div>
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-red)"></div> Rejeitado = Valor devolvido ao usuário</div>
-          </div>`;
-      }
     }
-
-    function criarRowSaque(userId, saqueId, saque) {
-      const dataFormatada = saque.data ? new Date(saque.data).toLocaleString('pt-BR') : '-';
-      const statusClass = saque.status.toLowerCase();
-      const acoes = saque.status === 'Pendente' ? `
-        <div class="acoes-cell">
-          <button class="btn-nubank btn-nubank-aprovar" onclick="confirmarAprovarSaque('${userId}', '${saqueId}', ${saque.valor}, '${saque.chavePix || ''}', '${saque.tipoChave || ''}', '${saque.nomeTitular || ''}')">✓ Aprovar</button>
-          <button class="btn-nubank btn-nubank-rejeitar" onclick="confirmarRejeitarSaque('${userId}', '${saqueId}', ${saque.valor})">✕ Rejeitar</button>
-        </div>
-      ` : '<span style="color: var(--nubank-gray);">-</span>';
-
-      return `
-        <tr>
-          <td><span class="user-id">${userId}</span></td>
-          <td class="valor-neg">R$ ${saque.valor.toFixed(2).replace(".", ",")}</td>
-          <td>${saque.tipoChave ? saque.tipoChave.toUpperCase() : '-'}</td>
-          <td>${saque.chavePix || '-'}</td>
-          <td>${saque.nomeTitular || '-'}</td>
-          <td>${dataFormatada}</td>
-          <td>
-            <span class="status-nubank status-${statusClass}">
-              <span class="status-dot"></span>
-              ${saque.status}
-            </span>
-          </td>
-          <td>${acoes}</td>
-        </tr>
-      `;
-    }
-
-    // ========== RENDERIZAR DEPÓSITOS ==========
-    function renderizarDepositos(depositos) {
-      let pendentesHTML = "";
-      let todosHTML = "";
-      let countPendentes = 0;
-
-      Object.entries(depositos).forEach(([userId, userDeps]) => {
-        Object.entries(userDeps).forEach(([depId, dep]) => {
-          const row = criarRowDeposito(userId, depId, dep);
-          todosHTML += row;
-          if (dep.status === 'Pendente') {
-            pendentesHTML += row;
-            countPendentes++;
-          }
+    function sacar() {
+      const valor = parseFloat(document.getElementById("valorSaque").value);
+      const tipoChave = document.getElementById("tipoChaveSaque").value;
+      const chave = document.getElementById("chaveSaque").value.trim();
+      const nome = document.getElementById("nomeTitular").value.trim();
+      if (!valor || valor <= 0) { mostrarToast("Informe um valor válido!", "erro"); return; }
+      if (valor < 8) { mostrarToast("Mínimo R$ 8,00!", "erro"); return; }
+      if (!chave) { mostrarToast("Informe a chave Pix!", "erro"); return; }
+      if (!nome) { mostrarToast("Informe o nome!", "erro"); return; }
+      USER_REF.once('value').then(snapshot => {
+        const data = snapshot.val() || { saldo: 0 };
+        const saldoAtual = data.saldo || 0;
+        if (saldoAtual < valor) { mostrarToast("Saldo insuficiente!", "erro"); return; }
+        USER_REF.child('saldo').set(saldoAtual - valor);
+        db.ref(`saques/${USER_ID}`).push().set({
+          valor, chavePix: chave, tipoChave, nomeTitular: nome,
+          status: 'Pendente', data: new Date().toISOString()
         });
+        document.getElementById("valorSaque").value = "";
+        document.getElementById("chaveSaque").value = "";
+        document.getElementById("nomeTitular").value = "";
+        mostrarToast(`Saque de R$ ${valor.toFixed(2).replace('.',',')} solicitado!`, 'info');
+        adicionarNotificacao('pendente', 'Saque Enviado', 'Aguardando aprovação do admin.');
       });
-
-      // Depósitos pendentes
-      const divPendentes = document.getElementById("listaDepositosPendentes");
-      if (pendentesHTML === "") {
-        divPendentes.innerHTML = `
-          <div class="empty-nubank">
-            <div class="icon">💵</div>
-            <p>Nenhum depósito pendente</p>
-            <p style="font-size: 12px; margin-top: 8px;">Quando um usuário fizer depósito, ele aparecerá aqui</p>
-          </div>`;
-      } else {
-        divPendentes.innerHTML = `
-          <div class="table-wrapper">
-            <table class="nubank-table">
-              <thead>
-                <tr>
-                  <th>ID Usuário</th>
-                  <th>Valor</th>
-                  <th>Status</th>
-                  <th>Data</th>
-                  <th style="min-width: 180px;">Ações</th>
-                </tr>
-              </thead>
-              <tbody>${pendentesHTML}</tbody>
-            </table>
-          </div>`;
-      }
-
-      // Todos depósitos
-      const divTodos = document.getElementById("listaTodosDepositos");
-      if (todosHTML === "") {
-        divTodos.innerHTML = `
-          <div class="empty-nubank">
-            <div class="icon">📊</div>
-            <p>Nenhum depósito registrado</p>
-          </div>`;
-      } else {
-        divTodos.innerHTML = `
-          <div class="table-wrapper">
-            <table class="nubank-table">
-              <thead>
-                <tr>
-                  <th>ID Usuário</th>
-                  <th>Valor</th>
-                  <th>Status</th>
-                  <th>Data</th>
-                  <th style="min-width: 180px;">Ações</th>
-                </tr>
-              </thead>
-              <tbody>${todosHTML}</tbody>
-            </table>
-          </div>
-          <div class="legenda-status">
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-orange)"></div> Pendente = Aguardando confirmação</div>
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-green)"></div> Aprovado = Valor creditado no usuário</div>
-            <div class="legenda-item"><div class="legenda-dot" style="background: var(--nubank-red)"></div> Rejeitado = Pagamento não identificado</div>
-          </div>`;
-      }
-
-      document.getElementById("statDepPendentes").innerText = countPendentes;
-      document.getElementById("badgeDepPendentes").innerText = countPendentes;
-      document.getElementById("navBadgeDepositos").innerText = countPendentes;
+    }
+    function mostrarToast(msg, tipo) {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      const toast = document.createElement("div");
+      toast.className = `toast ${tipo}`;
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
     }
 
-    function criarRowDeposito(userId, depId, dep) {
-      const statusClass = dep.status === 'Aprovado' ? 'aprovado' : dep.status === 'Rejeitado' ? 'rejeitado' : 'pendente';
-      const acoes = dep.status === 'Pendente' ? `
-        <div class="acoes-cell">
-          <button class="btn-nubank btn-nubank-aprovar" onclick="confirmarAprovarDeposito('${userId}', '${depId}', ${dep.valor})">✓ Aprovar</button>
-          <button class="btn-nubank btn-nubank-rejeitar" onclick="confirmarRejeitarDeposito('${userId}', '${depId}', ${dep.valor})">✕ Rejeitar</button>
-        </div>
-      ` : '<span style="color: var(--nubank-gray);">-</span>';
+    // ========== EXTRATO / HISTÓRICO PROFISSIONAL ==========
+    let todasTransacoes = [];
 
-      return `
-        <tr>
-          <td><span class="user-id">${userId}</span></td>
-          <td class="valor-pos">R$ ${dep.valor.toFixed(2).replace(".", ",")}</td>
-          <td>
-            <span class="status-nubank status-${statusClass}">
-              <span class="status-dot"></span>
-              ${dep.status}
-            </span>
-          </td>
-          <td>${dep.data ? new Date(dep.data).toLocaleString('pt-BR') : '-'}</td>
-          <td>${acoes}</td>
-        </tr>
-      `;
+    function filtrarExtrato(tipo, btn) {
+      filtroAtual = tipo;
+      document.querySelectorAll('.extrato-filtros button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderizarExtrato();
     }
 
-    // ========== RENDERIZAR USUÁRIOS ==========
-    function renderizarUsuarios(usuarios) {
-      const div = document.getElementById("listaUsuarios");
-      if (Object.keys(usuarios).length === 0) {
+    function renderizarExtrato() {
+      const div = document.getElementById('extratoLista');
+      let transacoes = [...todasTransacoes];
+      
+      if (filtroAtual !== 'todos') {
+        transacoes = transacoes.filter(t => t.tipo === filtroAtual);
+      }
+      
+      transacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
+      
+      if (transacoes.length === 0) {
         div.innerHTML = `
-          <div class="empty-nubank">
-            <div class="icon">👤</div>
-            <p>Nenhum usuário registrado</p>
+          <div class="empty-state">
+            <div class="icon">📋</div>
+            <p>Nenhuma transação encontrada</p>
           </div>`;
         return;
       }
-
-      let html = `
-        <div class="table-wrapper">
-          <table class="nubank-table">
-            <thead>
-              <tr>
-                <th>ID do Usuário</th>
-                <th>Saldo Atual</th>
-                <th>Total Investido</th>
-                <th>Data de Criação</th>
-              </tr>
-            </thead>
-            <tbody>`;
-
-      Object.entries(usuarios).forEach(([userId, user]) => {
+      
+      let html = '';
+      let dataAtual = '';
+      
+      transacoes.forEach(t => {
+        const data = new Date(t.data);
+        const dataStr = data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        
+        if (dataStr !== dataAtual) {
+          dataAtual = dataStr;
+          html += `<div class="extrato-data-header">${dataStr}</div>`;
+        }
+        
+        const icones = { investimento: '📈', deposito: '💰', saque: '💸' };
+        const cores = {
+          investimento: { bg: '#e8eaf6', cor: '#667eea' },
+          deposito: { bg: '#d5f5e3', cor: '#27ae60' },
+          saque: { bg: '#f8d7da', cor: '#e74c3c' }
+        };
+        
+        const isPositivo = t.tipo === 'deposito' || t.tipo === 'investimento';
+        const valorStr = isPositivo ? `+R$ ${t.valor.toFixed(2).replace('.', ',')}` : `-R$ ${t.valor.toFixed(2).replace('.', ',')}`;
+        
+        let detalhes = '';
+        if (t.tipo === 'investimento') {
+          detalhes = `<span>📊 ${t.plano || 'Investimento'}</span><span>💵 Investido: R$ ${(t.investimento || 0).toFixed(2).replace('.', ',')}</span>`;
+        } else if (t.tipo === 'saque') {
+          detalhes = `<span>🔑 ${t.tipoChave ? t.tipoChave.toUpperCase() : 'Pix'}</span><span>👤 ${t.nomeTitular || ''}</span>`;
+        } else if (t.tipo === 'deposito') {
+          detalhes = `<span>💳 Pix</span>`;
+        }
+        
+        const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        
         html += `
-          <tr>
-            <td><span class="user-id">${userId}</span></td>
-            <td class="valor-pos">R$ ${(user.saldo || 0).toFixed(2).replace(".", ",")}</td>
-            <td>R$ ${(user.totalInvestido || 0).toFixed(2).replace(".", ",")}</td>
-            <td>${user.dataCriacao ? new Date(user.dataCriacao).toLocaleString('pt-BR') : '-'}</td>
-          </tr>`;
+          <div class="extrato-item">
+            <div class="extrato-icon ${t.tipo}" style="background: ${cores[t.tipo].bg};">
+              ${icones[t.tipo]}
+            </div>
+            <div class="extrato-info">
+              <div class="titulo">${t.titulo || t.tipo.toUpperCase()}</div>
+              <div class="detalhes">
+                ${detalhes}
+                <span>🕐 ${hora}</span>
+              </div>
+            </div>
+            <div class="extrato-valor">
+              <div class="valor ${isPositivo ? 'pos' : 'neg'}">${valorStr}</div>
+              <div class="status ${t.status.toLowerCase()}">${t.status}</div>
+            </div>
+          </div>
+        `;
       });
-
-      html += `</tbody></table></div>`;
+      
       div.innerHTML = html;
+      atualizarResumo();
     }
 
-    // ========== MODAL DE CONFIRMAÇÃO ==========
-    let modalCallback = null;
-
-    function abrirModal(titulo, bodyHTML, btnText, btnClass, callback) {
-      document.getElementById("modalTitle").innerText = titulo;
-      document.getElementById("modalBody").innerHTML = bodyHTML;
-      const btn = document.getElementById("modalBtnConfirm");
-      btn.innerText = btnText;
-      btn.className = btnClass;
-      modalCallback = callback;
-      btn.onclick = () => {
-        callback();
-        fecharModal();
-      };
-      document.getElementById("modalConfirm").classList.add("show");
+    function atualizarResumo() {
+      let entradas = 0;
+      let saidas = 0;
+      
+      todasTransacoes.forEach(t => {
+        if (t.tipo === 'deposito' || t.tipo === 'investimento') {
+          entradas += t.valor;
+        } else if (t.tipo === 'saque') {
+          saidas += t.valor;
+        }
+      });
+      
+      document.getElementById('resumoEntradas').innerText = 'R$ ' + entradas.toFixed(2).replace('.', ',');
+      document.getElementById('resumoSaidas').innerText = 'R$ ' + saidas.toFixed(2).replace('.', ',');
+      document.getElementById('resumoTotal').innerText = 'R$ ' + (entradas - saidas).toFixed(2).replace('.', ',');
     }
 
-    function fecharModal() {
-      document.getElementById("modalConfirm").classList.remove("show");
-      modalCallback = null;
-    }
-
-    // ========== CONFIRMAR SAQUES ==========
-    function confirmarAprovarSaque(userId, saqueId, valor, chavePix, tipoChave, nomeTitular) {
-      const body = `
-        <div class="detail-row">
-          <span class="detail-label">ID do Usuário:</span>
-          <span class="detail-value">${userId}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Valor do Saque:</span>
-          <span class="detail-value" style="color: var(--nubank-green)">R$ ${valor.toFixed(2).replace(".", ",")}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Nome do Titular:</span>
-          <span class="detail-value">${nomeTitular || '-'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Tipo de Chave:</span>
-          <span class="detail-value">${tipoChave ? tipoChave.toUpperCase() : '-'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Chave Pix:</span>
-          <span class="detail-value">${chavePix || '-'}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Ação:</span>
-          <span class="detail-value" style="color: var(--nubank-green)">✓ Aprovar e marcar como pago</span>
-        </div>
-      `;
-      abrirModal("✓ Aprovar Saque", body, "Confirmar Aprovação", "modal-btn-confirm", () => {
-        aprovarSaque(userId, saqueId, valor);
+    function carregarExtrato() {
+      todasTransacoes = [];
+      
+      db.ref(`historico/${USER_ID}/investimentos`).once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'investimento',
+            titulo: `Investimento ${item.tipo}`,
+            valor: item.retorno || 0,
+            investimento: item.investimento || 0,
+            plano: item.tipo,
+            status: item.status || 'Ativo',
+            data: item.data
+          });
+        });
+        
+        return db.ref(`historico/${USER_ID}/depositos`).once('value');
+      }).then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'deposito',
+            titulo: 'Depósito via Pix',
+            valor: item.valor || 0,
+            status: item.status || 'Pendente',
+            data: item.data
+          });
+        });
+        
+        return db.ref(`saques/${USER_ID}`).once('value');
+      }).then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'saque',
+            titulo: 'Saque Pix',
+            valor: item.valor || 0,
+            tipoChave: item.tipoChave,
+            nomeTitular: item.nomeTitular,
+            status: item.status || 'Pendente',
+            data: item.data
+          });
+        });
+        
+        renderizarExtrato();
       });
     }
 
-    function confirmarRejeitarSaque(userId, saqueId, valor) {
-      const body = `
-        <div class="detail-row">
-          <span class="detail-label">ID do Usuário:</span>
-          <span class="detail-value">${userId}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Valor do Saque:</span>
-          <span class="detail-value" style="color: var(--nubank-red)">R$ ${valor.toFixed(2).replace(".", ",")}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Ação:</span>
-          <span class="detail-value" style="color: var(--nubank-red)">✕ Rejeitar e devolver valor ao usuário</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Resultado:</span>
-          <span class="detail-value">O valor de R$ ${valor.toFixed(2).replace(".", ",")} voltará para o saldo do usuário</span>
-        </div>
-      `;
-      abrirModal("✕ Rejeitar Saque", body, "Confirmar Rejeição", "modal-btn-danger", () => {
-        rejeitarSaque(userId, saqueId);
+    // ========== LISTENERS EM TEMPO REAL ==========
+    function iniciarListeners() {
+      USER_REF.on('value', (snapshot) => {
+        const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
+        const saldo = data.saldo || 0;
+        const totalInv = data.totalInvestido || 0;
+        document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        document.getElementById("totalInvestido").innerText = "R$ " + totalInv.toFixed(2).replace(".", ",");
+        document.getElementById("totalRendimentos").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        document.getElementById("saldoSaque").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        for (let i = 1; i <= 3; i++) {
+          const btn = document.getElementById("btn-inv" + i);
+          const op = opcoes[i];
+          if (saldo < op.investimento) { btn.innerText = "Saldo Insuficiente"; btn.classList.add("sem-saldo"); }
+          else { btn.innerText = "Investir Agora"; btn.classList.remove("sem-saldo"); }
+        }
+        const btnSaque = document.getElementById("btnSaque");
+        if (saldo < 8) { btnSaque.disabled = true; btnSaque.innerText = "Saldo abaixo do mínimo"; }
+        else { btnSaque.disabled = false; btnSaque.innerText = "Solicitar Saque"; }
       });
-    }
 
-    // ========== CONFIRMAR DEPÓSITOS ==========
-    function confirmarAprovarDeposito(userId, depId, valor) {
-      const body = `
-        <div class="detail-row">
-          <span class="detail-label">ID do Usuário:</span>
-          <span class="detail-value">${userId}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Valor do Depósito:</span>
-          <span class="detail-value" style="color: var(--nubank-green)">R$ ${valor.toFixed(2).replace(".", ",")}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Ação:</span>
-          <span class="detail-value" style="color: var(--nubank-green)">✓ Aprovar e creditar no saldo</span>
-        </div>
-      `;
-      abrirModal("✓ Aprovar Depósito", body, "Confirmar Aprovação", "modal-btn-confirm", () => {
-        aprovarDeposito(userId, depId, valor);
+      db.ref(`depositosPendentes/${USER_ID}`).on('child_changed', (snapshot) => {
+        const dep = snapshot.val();
+        if (dep.status === 'Aprovado') adicionarNotificacao('deposito', 'Depósito Aprovado! 💰', `R$ ${dep.valor.toFixed(2).replace('.',',')} aprovado.`);
+        else if (dep.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Depósito Rejeitado', `R$ ${dep.valor.toFixed(2).replace('.',',')} foi rejeitado.`);
       });
-    }
 
-    function confirmarRejeitarDeposito(userId, depId, valor) {
-      const body = `
-        <div class="detail-row">
-          <span class="detail-label">ID do Usuário:</span>
-          <span class="detail-value">${userId}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Valor do Depósito:</span>
-          <span class="detail-value" style="color: var(--nubank-red)">R$ ${valor.toFixed(2).replace(".", ",")}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Ação:</span>
-          <span class="detail-value" style="color: var(--nubank-red)">✕ Rejeitar depósito</span>
-        </div>
-      `;
-      abrirModal("✕ Rejeitar Depósito", body, "Confirmar Rejeição", "modal-btn-danger", () => {
-        rejeitarDeposito(userId, depId);
-      });
-    }
-
-    // ========== AÇÕES SAQUES ==========
-    function aprovarSaque(userId, saqueId, valor) {
-      db.ref(`saques/${userId}/${saqueId}`).update({
-        status: 'Aprovado',
-        dataAprovacao: new Date().toISOString()
-      }).then(() => {
-        mostrarToast(`✓ Saque de R$ ${valor.toFixed(2).replace(".", ",")} aprovado com sucesso!`, "sucesso");
-      }).catch(err => {
-        mostrarToast("Erro ao aprovar: " + err.message, "erro");
-      });
-    }
-
-    function rejeitarSaque(userId, saqueId) {
-      db.ref(`saques/${userId}/${saqueId}`).once('value').then(snapshot => {
+      db.ref(`saques/${USER_ID}`).on('child_changed', (snapshot) => {
         const saque = snapshot.val();
-        if (!saque) return;
+        if (saque.status === 'Aprovado') adicionarNotificacao('aprovado', 'Saque Aprovado! 🎉', `R$ ${saque.valor.toFixed(2).replace('.',',')} aprovado.`);
+        else if (saque.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Saque Rejeitado', 'Valor devolvido ao saldo.');
+      });
 
-        db.ref(`usuarios/${userId}/saldo`).once('value').then(saldoSnap => {
-          const saldoAtual = saldoSnap.val() || 0;
-          db.ref(`usuarios/${userId}/saldo`).set(saldoAtual + saque.valor);
-        });
+      db.ref(`historico/${USER_ID}`).on('value', () => {
+        carregarExtrato();
+      });
+      db.ref(`saques/${USER_ID}`).on('value', () => {
+        carregarExtrato();
+      });
+    }
 
-        db.ref(`saques/${userId}/${saqueId}`).update({
-          status: 'Rejeitado',
-          dataRejeicao: new Date().toISOString()
-        }).then(() => {
-          mostrarToast(`Saque rejeitado! R$ ${saque.valor.toFixed(2).replace(".", ",")} devolvido ao usuário.`, "sucesso");
+    // ========== INVESTABOT - IA INTELIGENTE ==========
+    const chatMessagesBot = document.getElementById('chatMessagesBot');
+    const chatInp = document.getElementById('chatInp');
+    const typingInd = document.getElementById('typingInd');
+    const chatOverlay = document.getElementById('chatOverlay');
+    const fabBadge = document.getElementById('fabBadge');
+    let chatAberto = false;
+
+    function toggleChat() {
+      chatAberto = !chatAberto;
+      if (chatAberto) {
+        chatOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        fabBadge.classList.remove('show');
+        setTimeout(() => chatInp.focus(), 300);
+      } else {
+        chatOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    function closeChatOverlay(e) {
+      if (e.target === chatOverlay) toggleChat();
+    }
+
+    // IA INTELIGENTE - Responde sobre o app E qualquer coisa
+    const knowledgeBase = {
+      // ===== SOBRE O APP =====
+      saudacoes: {
+        keywords: ['oi','ola','olá','eae','eai','opa','hey','bom dia','boa tarde','boa noite','salve','tudo bem','como vai','hi','hello'],
+        responses: [
+          'Oi! 👋 Sou o InvestaBot, pronto para te ajudar! O que você gostaria de saber?',
+          'Olá! 😊 Estou aqui para tirar suas dúvidas. Como posso ajudar?',
+          'E aí! 🚀 Pergunta qualquer coisa, estou aqui para ajudar!'
+        ]
+      },
+      comoFunciona: {
+        keywords: ['como funciona','o que é','para que serve','investa agora','como ganhar','como começar','quem somos','sobre o app','sobre'],
+        responses: [
+          `O <span class="hl">Investa Agora</span> é uma plataforma de investimentos! 💰\n\n<b>Como funciona:</b>\n1️⃣ Deposite via Pix\n2️⃣ Escolha um plano (Starter R$5, Pro R$10, Premium R$50)\n3️⃣ Invista e receba rendimentos diários\n4️⃣ Saque seus ganhos via Pix!\n\n💡 É simples e rápido!`
+        ]
+      },
+      investir: {
+        keywords: ['investir','investimento','plano','starter','pro','premium','como investir','fazer investimento','rendimento','retorno'],
+        responses: [
+          `Para investir no Investa Agora:\n\n1️⃣ Vá na aba <span class="hl">"Investir"</span>\n2️⃣ Escolha seu plano:\n   • <b>Starter</b> - R$5 → R$9 (3 dias)\n   • <b>Pro</b> - R$10 → R$15,50 (5 dias)\n   • <b>Premium</b> - R$50 → R$64 (8 dias)\n3️⃣ Clique em "Investir Agora"\n4️⃣ Pronto! O rendimento entra no seu saldo!\n\n⚠️ Precisa ter saldo suficiente para investir.`
+        ]
+      },
+      saque: {
+        keywords: ['sacar','saque','pix','como sacar','retirar','quero sacar','quanto posso sacar','valor minimo saque'],
+        responses: [
+          `Para sacar no Investa Agora:\n\n1️⃣ Vá na aba <span class="hl">"Sacar"</span>\n2️⃣ Informe o valor (mínimo <b>R$ 8,00</b>)\n3️⃣ Escolha o tipo de chave Pix (CPF, E-mail, Telefone ou Aleatória)\n4️⃣ Digite sua chave Pix e nome do titular\n5️⃣ Clique em "Solicitar Saque"\n6️⃣ Aguarde aprovação do admin!\n\n⏱️ Processamento em até 24h.`
+        ]
+      },
+      deposito: {
+        keywords: ['depositar','deposito','depósito','recarregar','recarga','pagar','como depositar','como recarregar','qr code'],
+        responses: [
+          `Para depositar no Investa Agora:\n\n1️⃣ Vá na aba <span class="hl">"Depositar"</span>\n2️⃣ Escolha o valor (R$5, R$10 ou R$50)\n3️⃣ Escaneie o QR Code com seu app bancário\n4️⃣ Pague via Pix\n5️⃣ Clique em "Já Paguei - Confirmar Depósito"\n6️⃣ Aguarde aprovação do admin!\n\n💳 <b>Forma:</b> Pix via QR Code\n⚡ É rápido e seguro!`
+        ]
+      },
+      ganhos: {
+        keywords: ['quanto ganho','quanto posso ganhar','rendimento','lucro','ganhos','dinheiro','recompensa','retorno','retorna'],
+        responses: [
+          `No Investa Agora seus ganhos dependem do plano! 📈\n\n<b>Planos disponíveis:</b>\n• <b>Starter</b> - Investe R$5 → Recebe R$9\n  (R$3/dia por 3 dias)\n• <b>Pro</b> - Investe R$10 → Recebe R$15,50\n  (R$3,10/dia por 5 dias)\n• <b>Premium</b> - Investe R$50 → Recebe R$64\n  (R$8/dia por 8 dias)\n\n💰 Quanto mais investir, mais ganha!`
+        ]
+      },
+      seguranca: {
+        keywords: ['seguro','seguranca','segurança','confiavel','confiável','golpe','fraude','protegido','dados'],
+        responses: [
+          `O Investa Agora leva sua segurança a sério! 🔒\n\n<b>Medidas:</b>\n✅ Dados salvos no Firebase (criptografados)\n✅ Depósitos verificados pelo admin\n✅ Saques analisados antes de aprovar\n✅ Sistema de notificações em tempo real\n✅ Seu ID é único e protegido\n\n💡 <b>Dica:</b> Nunca compartilhe seus dados com terceiros. Use apenas o app oficial!`
+        ]
+      },
+      extrato: {
+        keywords: ['extrato','historico','histórico','transacoes','transações','movimentacao','movimentação','ver extrato'],
+        responses: [
+          `Para ver seu extrato:\n\n1️⃣ Vá na aba <span class="hl">"Extrato"</span>\n2️⃣ Veja todas as suas transações organizadas por data\n3️⃣ Use os filtros para ver só investimentos, depósitos ou saques\n4️⃣ Veja o resumo com total de entradas, saídas e saldo movimentado\n\n📊 Tudo organizado e fácil de acompanhar!`
+        ]
+      },
+      notificacoes: {
+        keywords: ['notificacao','notificação','notificacoes','notificações','sino','bell','alerta','aviso'],
+        responses: [
+          `As notificações aparecem no sininho (🔔) no topo do app!\n\n<b>Você recebe notificações quando:</b>\n✅ Depósito é aprovado\n❌ Depósito é rejeitado\n✅ Saque é aprovado\n❌ Saque é rejeitado\n\n📱 Fique de olho no sininho para não perder nenhuma atualização!`
+        ]
+      },
+      problema: {
+        keywords: ['bug','erro','problema','nao funciona','não funciona','travou','crash','bugou','deu erro','ajuda','help'],
+        responses: [
+          `Sinto muito pelo problema! 😕\n\n<b>Tente isso:</b>\n1️⃣ Atualize a página do app\n2️⃣ Verifique sua conexão com internet\n3️⃣ Limpe o cache do navegador\n4️⃣ Tente em outro dispositivo\n\n<b>Problemas comuns:</b>\n• Saldo não atualiza → Aguarde alguns segundos\n• Depósito não aparece → Verifique se confirmou\n• Saque demorando → Pode levar até 24h\n\n🆘 Se persistir, use o <b>Chat de Suporte</b> (💬 no topo) para falar com o admin!`
+        ]
+      },
+      saldo: {
+        keywords: ['saldo','meu saldo','quanto tenho','carteira','dinheiro disponivel'],
+        responses: [
+          `Seu saldo aparece na tela inicial do app! 💰\n\n<b>Onde ver:</b>\n• Na aba "Investir", no topo tem a caixa roxa\n• Mostra: Saldo Disponível, Total Investido e Rendimentos\n• Também aparece na aba "Sacar"\n\n<b>Como aumentar:</b>\n✅ Faça depósitos via Pix\n✅ Invista em planos e receba rendimentos\n\n<b>Como usar:</b>\n💸 Saque via Pix quando quiser (mínimo R$8)!`
+        ]
+      },
+      planos: {
+        keywords: ['plano','planos','starter','pro','premium','opcao','opção','opcoes','opções','qual escolher'],
+        responses: [
+          `Temos 3 planos no Investa Agora:\n\n🟣 <b>Starter</b> - R$ 5,00\n   Rendimento: R$ 3,00/dia (3 dias)\n   Total: R$ 9,00\n\n🔵 <b>Pro</b> - R$ 10,00\n   Rendimento: R$ 3,10/dia (5 dias)\n   Total: R$ 15,50\n\n🟡 <b>Premium</b> - R$ 50,00\n   Rendimento: R$ 8,00/dia (8 dias)\n   Total: R$ 64,00\n\n💡 <b>Dica:</b> Comece pelo Starter para testar!`
+        ]
+      },
+      tempo: {
+        keywords: ['quanto tempo','demora','prazo','tempo','24h','quando recebo','quando cai'],
+        responses: [
+          `Sobre os prazos no Investa Agora:\n\n<b>⏱️ Depósitos:</b>\n• Até 24h para aprovação do admin\n• Você recebe notificação quando aprovar\n\n<b>⏱️ Saques:</b>\n• Até 24h para processamento\n• Também recebe notificação\n\n<b>⏱️ Rendimentos:</b>\n• Entram automaticamente no saldo após investir\n• Você vê o valor total de retorno imediatamente\n\n⚡ Geralmente é mais rápido que 24h!`
+        ]
+      },
+      despedida: {
+        keywords: ['tchau','adeus','ate logo','até logo','valeu','obrigado','obg','vlw','flw','falou','agradeço','thanks'],
+        responses: [
+          'Foi um prazer ajudar! 😊 Se precisar de mais alguma coisa, é só clicar no botão do robô. Bons investimentos! 🚀',
+          'De nada! 💪 Qualquer dúvida, estou por aqui. Vai lá e invista!',
+          'Valeu! 🎉 Aproveite o app e bons ganhos! Até a próxima!'
+        ]
+      },
+      suporte: {
+        keywords: ['suporte','admin','atendimento','falar com alguem','falar com alguém','humano','pessoa real','chat suporte'],
+        responses: [
+          `Para falar com o admin, clique no botão <b>💬 Suporte</b> no topo do app (próximo ao sininho de notificações). Lá você pode enviar mensagens diretamente para o administrador!`
+        ]
+      },
+
+      // ===== PERGUNTAS GERAIS (IA NORMAL) =====
+      clima: {
+        keywords: ['clima','tempo','previsao','previsão','vai chover','frio','calor','sol'],
+        responses: [
+          `Não tenho acesso ao clima em tempo real, mas recomendo usar o app do Google ou ClimaTempo! ☀️🌧️`,
+          `Infelizmente não consigo verificar o clima agora. Tente pesquisar no Google por "previsão do tempo"! 🌤️`
+        ]
+      },
+      data: {
+        keywords: ['que dia é hoje','data de hoje','que horas são','horario','horário','data atual'],
+        responses: [
+          `Hoje é ${new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}! ⏰`,
+          `Agora são ${new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})} do dia ${new Date().toLocaleDateString('pt-BR')}! 📅`
+        ]
+      },
+      piada: {
+        keywords: ['piada','conta uma piada','me faz rir','engracado','engraçado','rir','humor'],
+        responses: [
+          `Por que o programador foi ao médico? 🤔\nPorque tinha um <b>virus</b>! 😂`,
+          `O que o zero disse para o oito? 🤔\n<b>"Belo cinto!"</b> 😂`,
+          `Por que o computador foi preso? 🤔\nPorque ele cometeu um <b>cyber-crime</b>! 😂`,
+          `Qual é o café mais forte do mundo? 🤔\nO <b>café-expresso</b>! ☕😂`
+        ]
+      },
+      motivacao: {
+        keywords: ['motivacao','motivação','inspire-me','inspire me','frase motivacional','preciso de força','animo','ânimo'],
+        responses: [
+          `💪 <b>"O sucesso é a soma de pequenos esforços repetidos dia após dia."</b>\n\nContinue investindo e crescendo! 🚀`,
+          `🔥 <b>"A única maneira de fazer um excelente trabalho é amar o que você faz."</b>\n\nVocê está no caminho certo! 💰`,
+          `⭐ <b>"Não espere por oportunidades, crie-as."</b>\n\nCada investimento é um passo para o futuro! 📈`
+        ]
+      },
+      musica: {
+        keywords: ['musica','música','musica boa','recomenda musica','spotify','cantor','banda'],
+        responses: [
+          `Recomendo ouvir algo animado para investir melhor! 🎵\n\nTente: <b>Lo-fi Beats</b> no YouTube ou <b>Playlist de Foco</b> no Spotify!`,
+          `🎧 Música boa para investir:\n• Lo-fi Hip Hop\n• Jazz suave\n• MPB clássica\n\nColoca aí e vai investir! 💰`
+        ]
+      },
+      comida: {
+        keywords: ['comida','fome','restaurante','receita','cozinhar','jantar','almoco','almoço','lanche'],
+        responses: [
+          `🍕 Com fome? Recomendo pedir uma pizza e investir o resto do dinheiro no app! 😄\n\nBrincadeira! Tente apps como iFood, Uber Eats ou Rappi.`,
+          `🍔 Receita rápida: Miojo gourmet!\n1. Cozinhe o miojo\n2. Coloque queijo\n3. Oregano\n4. Pronto! 😂\n\nAgora volta a investir! 💰`
+        ]
+      },
+      esporte: {
+        keywords: ['futebol','jogo','time','campeonato','esporte','brasileirao','brasileirão','copa'],
+        responses: [
+          `⚽ Sou fã de futebol! Qual seu time?\n\nSe for do rival, a gente ainda pode ser amigo... mas vai investir no app pra pagar a aposta! 😂`,
+          `🏆 Copa do Mundo? Brasileirão? Libertadores?\n\nQualquer que seja, não esquece de investir no app enquanto assiste! 📈`
+        ]
+      },
+      tecnologia: {
+        keywords: ['celular','iphone','android','computador','pc','notebook','tecnologia','app','programacao','programação'],
+        responses: [
+          `📱 Tecnologia é vida! Se você está no celular, recomendo usar o app pelo navegador Chrome ou Safari para melhor experiência.`,
+          `💻 Dica tech: Sempre mantenha seus apps atualizados e use senhas fortes! E claro, invista no Investa Agora! 🚀`
+        ]
+      },
+      saude: {
+        keywords: ['saude','saúde','doente','remedio','remédio','medico','médico','hospital','dor'],
+        responses: [
+          `💊 Se não está se sentindo bem, procure um médico! Não sou especialista em saúde.\n\nMas posso te ajudar a investir quando melhorar! 😊`,
+          `🩺 Cuide da sua saúde! Beba água, durma bem e... invista no Investa Agora para ter dinheiro para o plano de saúde! 💰`
+        ]
+      },
+      amor: {
+        keywords: ['namorado','namorada','amor','crush','paixao','paixão','relacionamento','beijo','casamento'],
+        responses: [
+          `❤️ Amor é lindo! Mas lembre-se: <b>invista em você primeiro</b>!\n\nDepois que tiver dinheiro no app, leva seu crush num jantar! 🍷`,
+          `💕 Conselho amoroso: Pague o jantar com o dinheiro dos rendimentos do Investa Agora! Quem investe, conquista! 😄`
+        ]
+      },
+      dinheiro: {
+        keywords: ['dinheiro','rico','milionario','milionário','riqueza','fortuna','ganhar dinheiro','enriquecer'],
+        responses: [
+          `💰 Quer ficar rico? O Investa Agora é um ótimo começo!\n\nInvista nos planos, seja consistente e veja seu dinheiro crescer! 📈`,
+          `🤑 Segredo da riqueza: <b>consistência</b>!\n\nInvista regularmente no app, reinvesta os ganhos e seu patrimônio vai crescer! 🚀`
+        ]
+      },
+      trabalho: {
+        keywords: ['trabalho','emprego','vaga','curriculo','currículo','entrevista','salario','salário','chefe'],
+        responses: [
+          `💼 Procurando emprego? Enquanto isso, use o Investa Agora para fazer seu dinheiro render!\n\nQuem sabe você não vive só de rendimentos um dia? 🤑`,
+          `👔 Dica de carreira: Invista parte do seu salário todo mês no app. É o famoso "pague-se primeiro"! 💪`
+        ]
+      },
+      escola: {
+        keywords: ['escola','faculdade','estudo','prova','nota','aluno','professor','matéria','materia','estudar'],
+        responses: [
+          `📚 Estudando? Muito bom! Educação é o melhor investimento.\n\nMas não esquece de investir no app também! Dinheiro inteligente = futuro garantido! 🎓💰`,
+          `✏️ Dica de estudo: Faça pausas a cada 25 minutos (técnica Pomodoro) e durante as pausas, dê uma olhada no seu saldo no app! 😄`
+        ]
+      },
+      jogos: {
+        keywords: ['jogo','free fire','ff','lol','minecraft','roblox','fortnite','valorant','cs','gta'],
+        responses: [
+          `🎮 Gosta de jogar? Eu também! Mas sabe o que é melhor que loot box?\n\n<b>Rendimentos do Investa Agora!</b> Investe lá e compra skin com o lucro! 😎`,
+          `🕹️ Free Fire é top! Mas investir no app é melhor ainda porque o lucro é REAL, não só virtual! 💰🔥`
+        ]
+      },
+      netflix: {
+        keywords: ['netflix','filme','serie','série','cinema','youtube','tiktok','instagram','rede social'],
+        responses: [
+          `🎬 Netflix e chill? Que tal <b>Investa Agora e chill</b>? 😄\n\nAbre o app, faz um investimento e depois assiste série com a consciência tranquila!`,
+          `📺 Recomendação: Assista "O Lobo de Wall Street" e depois investe no app! 🐺💰`
+        ]
+      },
+      carro: {
+        keywords: ['carro','moto','veiculo','veículo','dirigir','cnh','combustivel','combustível','uber'],
+        responses: [
+          `🚗 Quer comprar um carro? O Investa Agora pode te ajudar a juntar a entrada!\n\nInvista consistentemente e veja seu sonho se realizar! 💪`,
+          `🏍️ Moto ou carro? Qualquer que seja, comece investindo no app! Cada real rendido é um passo mais perto! 🚀`
+        ]
+      },
+      casa: {
+        keywords: ['casa','apartamento','imovel','imóvel','aluguel','comprar casa','construir','moradia'],
+        responses: [
+          `🏠 Sonho da casa própria? O Investa Agora pode ser o primeiro passo!\n\nInvista os rendimentos e vá construindo seu patrimônio! 💰`,
+          `🔑 Dica imobiliária: Invista no app, junte uma grana e depois use como entrada no financiamento! 📈`
+        ]
+      },
+      viagem: {
+        keywords: ['viagem','viajar','ferias','férias','praia','disney','passagem','hotel','turismo'],
+        responses: [
+          `✈️ Quer viajar? Invista no app, junte os rendimentos e realize sua viagem dos sonhos!\n\nParis? Disney? Praia? O céu é o limite! 🌴`,
+          `🌎 Dica de viagem: Comece investindo R$50 no plano Premium e veja seu dinheiro crescer para pagar a passagem! 🏖️`
+        ]
+      },
+      aniversario: {
+        keywords: ['aniversario','aniversário','parabens','parabéns','niver','festa','bolo','presente'],
+        responses: [
+          `🎉 <b>Parabéns!</b> 🎂\n\nQue seu dia seja incrível! E de presente, que tal fazer um investimento no app? É o presente que mais rende! 🎁💰`,
+          `🥳 Feliz aniversário! 🎈\n\nDesejo muita saúde, felicidade e rendimentos no Investa Agora! 🚀`
+        ]
+      },
+      religiao: {
+        keywords: ['deus','jesus','igreja','oracao','oração','reza','fé','biblia','bíblia','religiao','religião'],
+        responses: [
+          `🙏 Que Deus te abençoe! A fé move montanhas e os investimentos multiplicam! 💰\n\nContinue com fé e consistência! 🙌`,
+          `✝️ Com Deus no coração e dinheiro no app, você não tem como dar errado! 🙏💰`
+        ]
+      },
+      politica: {
+        keywords: ['politica','política','presidente','governo','eleicao','eleição','pt','bolsonaro','lula'],
+        responses: [
+          `🏛️ Política é complicada... mas investir no Investa Agora é simples! 😄\n\nFoca no que você pode controlar: seu dinheiro! 💰`,
+          `🗳️ Voto é secreto, mas investimento no app é lucro garantido! 📈`
+        ]
+      },
+      musica2: {
+        keywords: ['cantar','cantor','banda','rock','sertanejo','funk','rap','pop','trap'],
+        responses: [
+          `🎵 Música boa é vida! Toca aí e investe no app ao mesmo tempo!\n\nQuem trabalha ouvindo música rende mais! 😄`,
+          `🎤 Sertanejo? Funk? Rock? O que importa é que seu dinheiro esteja rendendo no Investa Agora! 💰🎶`
+        ]
+      }
+    };
+
+    function normalizeText(text) {
+      return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '');
+    }
+
+    function findResponse(userMsg) {
+      const normalized = normalizeText(userMsg);
+      const words = normalized.split(/\s+/);
+      let bestMatch = null;
+      let bestScore = 0;
+
+      for (const [cat, data] of Object.entries(knowledgeBase)) {
+        let score = 0;
+        for (const kw of data.keywords) {
+          const nkw = normalizeText(kw);
+          if (normalized.includes(nkw)) score += nkw.split(/\s+/).length * 2;
+          for (const w of words) {
+            if (w.length > 2 && nkw.includes(w)) score += 1;
+          }
+        }
+        if (score > bestScore) { bestScore = score; bestMatch = data; }
+      }
+
+      if (bestMatch && bestScore >= 1) {
+        const resps = bestMatch.responses;
+        return resps[Math.floor(Math.random() * resps.length)];
+      }
+      
+      // Respostas genéricas inteligentes quando não reconhece
+      const genericas = [
+        `Interessante! 🤔\n\nNão tenho certeza da resposta exata, mas posso te ajudar com:\n• Como funciona o Investa Agora\n• Como investir, sacar ou depositar\n• Planos disponíveis\n• Segurança do app\n\nO que você quer saber?`,
+        `Hmm, boa pergunta! 😊\n\nSou especialista no Investa Agora, mas posso tentar ajudar! Se for algo específico do app, me pergunte sobre:\n💰 Investimentos\n📸 Depósitos e Saques\n📊 Extrato\n🔒 Segurança`,
+        `Não entendi muito bem... 🧐\n\nMas estou aqui para ajudar! Tente perguntar sobre o app ou use os botões rápidos abaixo! 👇`,
+        `Essa é nova pra mim! 😅\n\nMas não desiste não! Pergunte sobre o Investa Agora que eu sei tudo:\n• Planos (Starter, Pro, Premium)\n• Como ganhar dinheiro\n• Saques e depósitos\n\nO que te interessa?`
+      ];
+      return genericas[Math.floor(Math.random() * genericas.length)];
+    }
+
+    function addChatMsg(text, isUser) {
+      const div = document.createElement('div');
+      div.className = 'msg-bot ' + (isUser ? 'user' : 'bot');
+      div.innerHTML = text;
+      const time = document.createElement('div');
+      time.className = 'msg-time';
+      time.textContent = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      div.appendChild(time);
+      chatMessagesBot.appendChild(div);
+      chatMessagesBot.scrollTop = chatMessagesBot.scrollHeight;
+    }
+
+    function showTyping(show) {
+      typingInd.classList.toggle('active', show);
+      if (show) chatMessagesBot.scrollTop = chatMessagesBot.scrollHeight;
+    }
+
+    function sendChatMsg() {
+      const text = chatInp.value.trim();
+      if (!text) return;
+      addChatMsg(text, true);
+      chatInp.value = '';
+      showTyping(true);
+      setTimeout(() => {
+        showTyping(false);
+        addChatMsg(findResponse(text));
+      }, 800 + Math.random() * 700);
+    }
+
+    function quickMsg(text) {
+      chatInp.value = text;
+      sendChatMsg();
+    }
+
+    // ========== CHAT DE SUPORTE ==========
+    const supportMessages = document.getElementById('supportMessages');
+    const supportInp = document.getElementById('supportInp');
+    const supportOverlay = document.getElementById('supportOverlay');
+    const supportBadgeHeader = document.getElementById('supportBadgeHeader');
+    let supportAberto = false;
+    let supportMsgsNaoLidas = 0;
+
+    function toggleSupport() {
+      supportAberto = !supportAberto;
+      if (supportAberto) {
+        supportOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        supportMsgsNaoLidas = 0;
+        supportBadgeHeader.classList.remove('show');
+        setTimeout(() => supportInp.focus(), 300);
+        marcarMsgsComoLidas();
+      } else {
+        supportOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    function closeSupportOverlay(e) {
+      if (e.target === supportOverlay) toggleSupport();
+    }
+
+    function addSupportMsg(text, tipo) {
+      const div = document.createElement('div');
+      div.className = 'msg-support ' + tipo;
+      div.innerHTML = text;
+      const time = document.createElement('div');
+      time.className = 'msg-time';
+      time.style.color = tipo === 'user' ? 'rgba(255,255,255,0.7)' : '#6b6b8a';
+      time.textContent = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      div.appendChild(time);
+      supportMessages.appendChild(div);
+      supportMessages.scrollTop = supportMessages.scrollHeight;
+    }
+
+    function sendSupportMsg() {
+      const text = supportInp.value.trim();
+      if (!text) return;
+      
+      // Adiciona mensagem do usuário na tela
+      addSupportMsg(text, 'user');
+      supportInp.value = '';
+      
+      // Envia para o Firebase
+      const msgData = {
+        texto: text,
+        tipo: 'user',
+        userId: USER_ID,
+        data: new Date().toISOString(),
+        lida: false
+      };
+      
+      db.ref(`suporte/${USER_ID}/mensagens`).push().set(msgData);
+    }
+
+    function iniciarChatSuporte() {
+      // Carrega mensagens anteriores
+      db.ref(`suporte/${USER_ID}/mensagens`).on('child_added', (snapshot) => {
+        const msg = snapshot.val();
+        if (!msg) return;
+        
+        // Se for mensagem do admin e o chat não estiver aberto, mostra badge
+        if (msg.tipo === 'admin' && !supportAberto) {
+          supportMsgsNaoLidas++;
+          supportBadgeHeader.innerText = supportMsgsNaoLidas;
+          supportBadgeHeader.classList.add('show');
+        }
+        
+        // Só adiciona na tela se não foi enviada pelo usuário atual (evita duplicar)
+        // Verifica se já existe na tela
+        const existing = Array.from(supportMessages.children).find(el => 
+          el.dataset && el.dataset.msgId === snapshot.key
+        );
+        if (!existing) {
+          const div = document.createElement('div');
+          div.className = 'msg-support ' + msg.tipo;
+          div.dataset.msgId = snapshot.key;
+          div.innerHTML = msg.texto;
+          const time = document.createElement('div');
+          time.className = 'msg-time';
+          time.style.color = msg.tipo === 'user' ? 'rgba(255,255,255,0.7)' : '#6b6b8a';
+          time.textContent = new Date(msg.data).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+          div.appendChild(time);
+          supportMessages.appendChild(div);
+          supportMessages.scrollTop = supportMessages.scrollHeight;
+        }
+      });
+    }
+
+    function marcarMsgsComoLidas() {
+      db.ref(`suporte/${USER_ID}/mensagens`).once('value').then(snapshot => {
+        const msgs = snapshot.val() || {};
+        Object.entries(msgs).forEach(([key, msg]) => {
+          if (msg.tipo === 'admin' && !msg.lida) {
+            db.ref(`suporte/${USER_ID}/mensagens/${key}`).update({ lida: true });
+          }
         });
       });
     }
 
-    // ========== AÇÕES DEPÓSITOS ==========
-    function aprovarDeposito(userId, depId, valor) {
-      db.ref(`depositosPendentes/${userId}/${depId}`).update({
-        status: 'Aprovado',
-        dataAprovacao: new Date().toISOString()
-      }).then(() => {
-        db.ref(`usuarios/${userId}/saldo`).once('value').then(saldoSnap => {
-          const saldoAtual = saldoSnap.val() || 0;
-          db.ref(`usuarios/${userId}/saldo`).set(saldoAtual + valor);
-        });
-
-        mostrarToast(`✓ Depósito de R$ ${valor.toFixed(2).replace(".", ",")} aprovado e creditado!`, "sucesso");
-      }).catch(err => {
-        mostrarToast("Erro ao aprovar: " + err.message, "erro");
-      });
-    }
-
-    function rejeitarDeposito(userId, depId) {
-      db.ref(`depositosPendentes/${userId}/${depId}`).update({
-        status: 'Rejeitado',
-        dataRejeicao: new Date().toISOString()
-      }).then(() => {
-        mostrarToast("Depósito rejeitado!", "sucesso");
-      }).catch(err => {
-        mostrarToast("Erro ao rejeitar: " + err.message, "erro");
-      });
-    }
-
-    // ========== STATS ==========
-    function atualizarStatsSaques(saques) {
-      let countPendentes = 0;
-      let totalSaques = 0;
-
-      Object.values(saques).forEach(userSaques => {
-        Object.values(userSaques).forEach(saque => {
-          totalSaques += saque.valor;
-          if (saque.status === 'Pendente') countPendentes++;
-        });
-      });
-
-      document.getElementById("statPendentes").innerText = countPendentes;
-      document.getElementById("badgePendentes").innerText = countPendentes;
-      document.getElementById("navBadgeSaques").innerText = countPendentes;
-      document.getElementById("statSaques").innerText = "R$ " + totalSaques.toFixed(2).replace(".", ",");
-    }
-
-    function atualizarStatsDepositos(depositos) {
-      let countPendentes = 0;
-
-      Object.values(depositos).forEach(userDeps => {
-        Object.values(userDeps).forEach(dep => {
-          if (dep.status === 'Pendente') countPendentes++;
-        });
-      });
-
-      document.getElementById("statDepPendentes").innerText = countPendentes;
-      document.getElementById("badgeDepPendentes").innerText = countPendentes;
-      document.getElementById("navBadgeDepositos").innerText = countPendentes;
-    }
-
-    // ========== TOAST ==========
-    function mostrarToast(msg, tipo) {
-      const toast = document.createElement("div");
-      toast.className = "toast-nubank " + tipo;
-      toast.innerText = msg;
-      document.body.appendChild(toast);
-      setTimeout(() => { toast.remove(); }, 4000);
-    }
+    // Mensagem de boas-vindas automática da IA
+    setTimeout(() => {
+      addChatMsg('💡 <b>Dica:</b> Você pode me perguntar QUALQUER COISA! Sobre o app, clima, piadas, motivação... Tente: "Como investir?" ou "Conta uma piada!"');
+    }, 2000);
   </script>
 </body>
 </html>
