@@ -15,7 +15,7 @@
       padding-bottom: 20px;
     }
     .app-header {
-      background: #2c3e50;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
       padding: 20px;
       position: sticky;
@@ -28,7 +28,7 @@
       align-items: center;
     }
     .app-header h1 { font-size: 26px; font-weight: 700; }
-    .app-header p { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+    .app-header p { font-size: 14px; opacity: 0.9; margin-top: 4px; }
     .notif-bell {
       background: rgba(255,255,255,0.2);
       border: none;
@@ -116,8 +116,8 @@
     .nav-menu {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      padding: 14px 12px;
+      gap: 8px;
+      padding: 14px 10px;
       background: #fff;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       position: sticky;
@@ -125,36 +125,41 @@
       z-index: 99;
     }
     .nav-menu button {
-      padding: 10px 18px;
+      padding: 10px 14px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       background: #ecf0f1;
       color: #2c3e50;
       transition: all 0.2s;
     }
-    .nav-menu button.active { background: #27ae60; color: #fff; }
+    .nav-menu button.active { background: #667eea; color: #fff; }
     .tab-content { display: none; padding: 0 16px 20px; }
     .tab-content.active { display: block; }
+
+    /* SALDO BOX */
     #saldo-box {
       max-width: 900px;
       margin: 20px auto;
-      background: #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border-radius: 16px;
       padding: 24px 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
       gap: 16px;
+      color: #fff;
     }
     .saldo-item { text-align: center; }
-    .saldo-item .label { color: #7f8c8d; font-size: 13px; text-transform: uppercase; font-weight: 600; }
-    .saldo-item .value { font-size: 28px; font-weight: 700; color: #2c3e50; }
-    .saldo-item .value.green { color: #27ae60; }
-    .saldo-item .value.orange { color: #d35400; }
+    .saldo-item .label { color: rgba(255,255,255,0.8); font-size: 12px; text-transform: uppercase; font-weight: 600; }
+    .saldo-item .value { font-size: 28px; font-weight: 700; color: #fff; }
+    .saldo-item .value.green { color: #a8e6cf; }
+    .saldo-item .value.orange { color: #ffd3b6; }
+
+    /* CONTAINER */
     .container {
       display: flex;
       justify-content: center;
@@ -199,7 +204,7 @@
     .option .value.red { color: #e74c3c; }
     button.invest {
       width: 100%;
-      background: #27ae60;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -208,9 +213,13 @@
       cursor: pointer;
       font-size: 17px;
       font-weight: 700;
+      transition: transform 0.2s;
     }
+    button.invest:active { transform: scale(0.98); }
     button.invest.sem-saldo { background: #e74c3c; }
     button.invest:disabled { background: #95a5a6; cursor: not-allowed; }
+
+    /* DEPÓSITO */
     .deposito-area {
       max-width: 500px;
       margin: 20px auto;
@@ -237,8 +246,8 @@
       transition: all 0.2s;
     }
     .qr-item:active { transform: scale(0.97); }
-    .qr-item.selected { border-color: #27ae60; background: #d5f5e3; }
-    .qr-item .valor-qr { font-size: 20px; font-weight: 700; color: #27ae60; }
+    .qr-item.selected { border-color: #667eea; background: #e8eaf6; }
+    .qr-item .valor-qr { font-size: 20px; font-weight: 700; color: #667eea; }
     .qr-item .label-qr { font-size: 12px; color: #7f8c8d; margin-top: 4px; }
     .qr-item img {
       width: 100%;
@@ -268,7 +277,7 @@
     .timer-box .timer-info { font-size: 13px; color: #7f8c8d; margin-top: 10px; }
     .btn-confirmar-deposito {
       width: 100%;
-      background: #27ae60;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -279,6 +288,8 @@
       font-weight: 700;
     }
     .btn-confirmar-deposito:disabled { background: #95a5a6; cursor: not-allowed; }
+
+    /* SAQUE */
     .saque-area {
       max-width: 500px;
       margin: 20px auto;
@@ -312,10 +323,10 @@
       border-radius: 10px;
       font-size: 16px;
     }
-    .saque-area input:focus, .saque-area select:focus { outline: none; border-color: #27ae60; }
+    .saque-area input:focus, .saque-area select:focus { outline: none; border-color: #667eea; }
     .btn-saque {
       width: 100%;
-      background: #2980b9;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -326,48 +337,171 @@
       font-weight: 700;
     }
     .btn-saque:disabled { background: #95a5a6; cursor: not-allowed; }
-    #historico {
+
+    /* HISTÓRICO / EXTRATO PROFISSIONAL */
+    .extrato-container {
       max-width: 900px;
-      margin: 14px auto;
+      margin: 20px auto;
+    }
+    .extrato-header {
       background: #fff;
       border-radius: 16px;
-      padding: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    #historico h3 { color: #2c3e50; margin-bottom: 12px; font-size: 18px; }
-    .hist-list { list-style: none; }
-    .hist-list li {
+    .extrato-header h2 {
+      font-size: 22px;
+      color: #2c3e50;
+      margin-bottom: 16px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 12px 14px;
-      margin: 8px 0;
-      background: #f8f9fa;
-      border-radius: 10px;
-      border-left: 3px solid #27ae60;
-      font-size: 15px;
+      gap: 10px;
     }
-    .hist-list li.deposito { border-left-color: #2980b9; }
-    .hist-list li.saque { border-left-color: #d35400; }
-    .hist-list li .left { flex: 1; }
-    .hist-list li .tipo { font-weight: 600; color: #2c3e50; }
-    .hist-list li .data { font-size: 12px; color: #95a5a6; margin-top: 3px; }
-    .hist-list li .valor { font-weight: 700; }
-    .hist-list li .valor.pos { color: #27ae60; }
-    .hist-list li .valor.neg { color: #d35400; }
-    .status {
+    .extrato-filtros {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .extrato-filtros button {
+      padding: 8px 16px;
+      border: 2px solid #ecf0f1;
+      border-radius: 20px;
+      background: #fff;
+      color: #7f8c8d;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .extrato-filtros button.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .extrato-filtros button:hover:not(.active) {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .extrato-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .resumo-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .resumo-card .label {
+      font-size: 11px;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .resumo-card .value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .resumo-card .value.pos { color: #27ae60; }
+    .resumo-card .value.neg { color: #e74c3c; }
+    .resumo-card .value.total { color: #667eea; }
+
+    .extrato-lista {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .extrato-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f0f2f5;
+      transition: background 0.2s;
+    }
+    .extrato-item:hover {
+      background: #f8f9fa;
+    }
+    .extrato-item:last-child {
+      border-bottom: none;
+    }
+    .extrato-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 14px;
+      flex-shrink: 0;
+    }
+    .extrato-icon.investimento { background: #e8eaf6; }
+    .extrato-icon.deposito { background: #d5f5e3; }
+    .extrato-icon.saque { background: #f8d7da; }
+    .extrato-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .extrato-info .titulo {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+    .extrato-info .detalhes {
+      font-size: 12px;
+      color: #7f8c8d;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .extrato-info .detalhes span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .extrato-valor {
+      text-align: right;
+      margin-left: 10px;
+    }
+    .extrato-valor .valor {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .extrato-valor .valor.pos { color: #27ae60; }
+    .extrato-valor .valor.neg { color: #e74c3c; }
+    .extrato-valor .status {
       font-size: 11px;
       padding: 3px 10px;
       border-radius: 20px;
-      background: #d5f5e3;
-      color: #27ae60;
       font-weight: 600;
-      margin-top: 5px;
+      margin-top: 4px;
       display: inline-block;
     }
-    .status.pendente { background: #fff3cd; color: #856404; }
-    .status.rejeitado { background: #f8d7da; color: #721c24; }
-    .empty-state { text-align: center; padding: 35px; color: #95a5a6; font-size: 15px; }
+    .extrato-valor .status.pendente { background: #fff3cd; color: #856404; }
+    .extrato-valor .status.aprovado { background: #d5f5e3; color: #27ae60; }
+    .extrato-valor .status.rejeitado { background: #f8d7da; color: #721c24; }
+    .extrato-valor .status.ativo { background: #e8eaf6; color: #667eea; }
+
+    .extrato-data-header {
+      background: #f8f9fa;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .empty-state { text-align: center; padding: 50px 20px; color: #95a5a6; }
+    .empty-state .icon { font-size: 60px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state p { font-size: 16px; }
+
     .qr-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -380,7 +514,7 @@
       padding: 20px;
     }
     .qr-overlay.show { display: flex; }
-    .qr-overlay .qr-valor { font-size: 26px; font-weight: 700; color: #27ae60; margin-bottom: 14px; }
+    .qr-overlay .qr-valor { font-size: 26px; font-weight: 700; color: #667eea; margin-bottom: 14px; }
     .qr-overlay img { max-width: 280px; width: 100%; border-radius: 14px; margin-bottom: 14px; }
     .qr-overlay .qr-info { color: #95a5a6; font-size: 14px; margin-bottom: 18px; text-align: center; }
     .qr-overlay .btn-fechar {
@@ -398,7 +532,7 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: #27ae60;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
       padding: 14px 28px;
       border-radius: 10px;
@@ -428,10 +562,13 @@
       .option { width: 100%; max-width: none; margin: 0 4px; }
       #saldo-box { margin: 12px; padding: 20px 12px; }
       .saldo-item .value { font-size: 24px; }
-      .nav-menu { flex-wrap: wrap; gap: 8px; }
-      .nav-menu button { flex: 1; min-width: 100px; padding: 12px; font-size: 13px; }
+      .nav-menu { flex-wrap: wrap; gap: 6px; }
+      .nav-menu button { flex: 1; min-width: 80px; padding: 10px 8px; font-size: 12px; }
       .qr-grid { grid-template-columns: repeat(1, 1fr); }
       .app-header h1 { font-size: 22px; }
+      .extrato-resumo { grid-template-columns: 1fr; }
+      .extrato-item { padding: 12px; }
+      .extrato-icon { width: 40px; height: 40px; font-size: 20px; }
     }
   </style>
 </head>
@@ -448,24 +585,25 @@
       </button>
     </div>
   </div>
-  
+
   <div class="notif-dropdown" id="notifDropdown">
     <div class="notif-dropdown-header">🔔 Notificações</div>
     <div id="notifList"><div class="notif-empty">Nenhuma notificação</div></div>
   </div>
-  
+
   <div class="user-bar">
     <span>ID: <strong id="userIdDisplay">---</strong></span>
     <span id="userDate"></span>
   </div>
-  
+
   <div class="nav-menu">
     <button class="active" onclick="mostrarAba('investir', this)">📈 Investir</button>
     <button onclick="mostrarAba('depositar', this)">💰 Depositar</button>
     <button onclick="mostrarAba('sacar', this)">💸 Sacar</button>
-    <button onclick="mostrarAba('historico', this)">📋 Extrato</button>
+    <button onclick="mostrarAba('extrato', this)">📋 Extrato</button>
   </div>
 
+  <!-- ABA INVESTIR -->
   <div id="aba-investir" class="tab-content active">
     <div id="saldo-box">
       <div class="saldo-item">
@@ -481,7 +619,7 @@
         <div class="value" id="totalRendimentos">R$ 0,00</div>
       </div>
     </div>
-    
+
     <div class="container">
       <div class="option">
         <div class="badge">POPULAR</div>
@@ -511,11 +649,12 @@
     </div>
   </div>
 
+  <!-- ABA DEPOSITAR -->
   <div id="aba-depositar" class="tab-content">
     <div class="deposito-area">
       <h3>💰 Depositar via Pix</h3>
       <p>Escaneie o QR Code e pague via Pix. Depois confirme o depósito.</p>
-      
+
       <div class="qr-grid">
         <div class="qr-item" onclick="selecionarQR(5)" id="qr-item-5">
           <div class="valor-qr">R$ 5</div>
@@ -533,20 +672,21 @@
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PIX-DEPOSITO-INVESTA-AGORA-R$50" alt="QR R$ 50">
         </div>
       </div>
-      
+
       <div class="timer-box" id="timerBox">
         <div class="timer-label">⏱️ Tempo para confirmar depósito</div>
         <div class="timer-display" id="timerDisplay">05:00</div>
         <div class="timer-info">Escaneie o QR Code, pague e clique em "Já Paguei"</div>
         <button class="btn-confirmar-deposito" id="btnConfirmarDeposito" onclick="confirmarDeposito()">✅ Já Paguei - Confirmar Depósito</button>
       </div>
-      
+
       <p style="font-size: 12px; color: #95a5a6; margin-top: 14px; text-align: center;">
         ⚠️ O depósito será analisado pelo admin antes de ser aprovado.
       </p>
     </div>
   </div>
 
+  <!-- ABA SACAR -->
   <div id="aba-sacar" class="tab-content">
     <div class="saque-area">
       <h3>💸 Solicitar Saque</h3>
@@ -571,24 +711,41 @@
     </div>
   </div>
 
-  <div id="aba-historico" class="tab-content">
-    <div id="historico">
-      <h3>📊 Investimentos</h3>
-      <ul class="hist-list" id="listaHistorico">
-        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">📈</div><p>Nenhum investimento realizado</p></li>
-      </ul>
-    </div>
-    <div id="historico">
-      <h3>💰 Depósitos</h3>
-      <ul class="hist-list" id="listaDepositos">
-        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">💵</div><p>Nenhum depósito realizado</p></li>
-      </ul>
-    </div>
-    <div id="historico">
-      <h3>💸 Saques</h3>
-      <ul class="hist-list" id="listaSaques">
-        <li class="empty-state"><div style="font-size: 36px; margin-bottom: 8px;">🏧</div><p>Nenhum saque solicitado</p></li>
-      </ul>
+  <!-- ABA EXTRATO (HISTÓRICO PROFISSIONAL) -->
+  <div id="aba-extrato" class="tab-content">
+    <div class="extrato-container">
+      <!-- Header com filtros -->
+      <div class="extrato-header">
+        <h2>📋 Extrato Completo</h2>
+        <div class="extrato-filtros">
+          <button class="active" onclick="filtrarExtrato('todos', this)">Todos</button>
+          <button onclick="filtrarExtrato('investimento', this)">📈 Investimentos</button>
+          <button onclick="filtrarExtrato('deposito', this)">💰 Depósitos</button>
+          <button onclick="filtrarExtrato('saque', this)">💸 Saques</button>
+        </div>
+        <div class="extrato-resumo">
+          <div class="resumo-card">
+            <div class="label">Total Entradas</div>
+            <div class="value pos" id="resumoEntradas">R$ 0,00</div>
+          </div>
+          <div class="resumo-card">
+            <div class="label">Total Saídas</div>
+            <div class="value neg" id="resumoSaidas">R$ 0,00</div>
+          </div>
+          <div class="resumo-card">
+            <div class="label">Saldo Movimentado</div>
+            <div class="value total" id="resumoTotal">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de transações -->
+      <div class="extrato-lista" id="extratoLista">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>Nenhuma transação registrada</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -604,30 +761,49 @@
   </div>
 
   <script>
+    // ========== FIREBASE ==========
     const firebaseConfig = {
       databaseURL: "https://investa-agora-default-rtdb.firebaseio.com/"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // ========== USUÁRIO ==========
+    let USER_ID = null;
+    let USER_REF = null;
+    let filtroAtual = 'todos';
+
     function gerarIdUnico() {
-      return Math.floor(100000 + Math.random() * 900000).toString();
+      return "USER_" + Math.floor(100000 + Math.random() * 900000).toString();
     }
+
     function inicializarUsuario() {
-      let userId = localStorage.getItem("investa_user_id");
+      let userId = sessionStorage.getItem("investa_session_id");
+
       if (!userId) {
         userId = gerarIdUnico();
-        localStorage.setItem("investa_user_id", userId);
+        sessionStorage.setItem("investa_session_id", userId);
+
         db.ref(`usuarios/${userId}`).set({
-          saldo: 0, totalInvestido: 0, dataCriacao: new Date().toISOString()
+          saldo: 0, 
+          totalInvestido: 0, 
+          dataCriacao: new Date().toISOString()
         });
       }
-      document.getElementById("userIdDisplay").innerText = userId;
+
+      USER_ID = userId;
+      USER_REF = db.ref(`usuarios/${USER_ID}`);
+
+      document.getElementById("userIdDisplay").innerText = USER_ID;
       const agora = new Date();
       document.getElementById("userDate").innerText = agora.toLocaleDateString("pt-BR") + " " + agora.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
-      return userId;
+
+      iniciarListeners();
+
+      return USER_ID;
     }
-    const USER_ID = inicializarUsuario();
+
+    inicializarUsuario();
 
     const QR_CODES = {
       5: { valor: 5, imagem: 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=PIX-DEPOSITO-INVESTA-AGORA-R$5' },
@@ -687,17 +863,20 @@
       clearInterval(timerInterval);
       document.getElementById('timerBox').classList.remove('show');
       const depId = Date.now();
+
       db.ref(`depositosPendentes/${USER_ID}/${depId}`).set({
         valor: valor, status: 'Pendente', data: new Date().toISOString()
       });
       db.ref(`historico/${USER_ID}/depositos`).push().set({
         valor: valor, status: 'Pendente', data: new Date().toISOString()
       });
+
       mostrarToast(`Depósito de R$ ${valor.toFixed(2).replace('.',',')} enviado para aprovação!`, 'sucesso');
       document.querySelectorAll('.qr-item').forEach(el => el.classList.remove('selected'));
       qrSelecionado = null;
     }
 
+    // ========== NOTIFICAÇÕES ==========
     let notificacoes = [];
     let notifNaoLidas = 0;
     function toggleNotif(e) {
@@ -739,6 +918,7 @@
       if (!bell.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("show");
     });
 
+    // ========== NAVEGAÇÃO ==========
     const opcoes = {
       1: { nome: "Starter", investimento: 5, retorno: 9 },
       2: { nome: "Pro", investimento: 10, retorno: 15.50 },
@@ -750,16 +930,18 @@
       document.getElementById('aba-' + aba).classList.add('active');
       btn.classList.add('active');
     }
+
+    // ========== INVESTIR ==========
     function investir(opcao) {
       const op = opcoes[opcao];
-      db.ref(`usuarios/${USER_ID}`).once('value').then(snapshot => {
+      USER_REF.once('value').then(snapshot => {
         const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
         const saldoAtual = data.saldo || 0;
         if (saldoAtual < op.investimento) {
           mostrarToast(`Saldo insuficiente! Precisa de R$ ${op.investimento.toFixed(2).replace('.',',')}`, 'erro');
           return;
         }
-        db.ref(`usuarios/${USER_ID}`).update({
+        USER_REF.update({
           saldo: saldoAtual - op.investimento + op.retorno,
           totalInvestido: (data.totalInvestido || 0) + op.investimento
         });
@@ -770,6 +952,8 @@
         mostrarToast(`Investimento realizado! +R$ ${op.retorno.toFixed(2).replace('.',',')}`, 'sucesso');
       });
     }
+
+    // ========== SACAR ==========
     function sacar() {
       const valor = parseFloat(document.getElementById("valorSaque").value);
       const tipoChave = document.getElementById("tipoChaveSaque").value;
@@ -779,11 +963,11 @@
       if (valor < 8) { mostrarToast("Mínimo R$ 8,00!", "erro"); return; }
       if (!chave) { mostrarToast("Informe a chave Pix!", "erro"); return; }
       if (!nome) { mostrarToast("Informe o nome!", "erro"); return; }
-      db.ref(`usuarios/${USER_ID}`).once('value').then(snapshot => {
+      USER_REF.once('value').then(snapshot => {
         const data = snapshot.val() || { saldo: 0 };
         const saldoAtual = data.saldo || 0;
         if (saldoAtual < valor) { mostrarToast("Saldo insuficiente!", "erro"); return; }
-        db.ref(`usuarios/${USER_ID}/saldo`).set(saldoAtual - valor);
+        USER_REF.child('saldo').set(saldoAtual - valor);
         db.ref(`saques/${USER_ID}`).push().set({
           valor, chavePix: chave, tipoChave, nomeTitular: nome,
           status: 'Pendente', data: new Date().toISOString()
@@ -795,6 +979,7 @@
         adicionarNotificacao('pendente', 'Saque Enviado', 'Aguardando aprovação do admin.');
       });
     }
+
     function mostrarToast(msg, tipo) {
       const existing = document.querySelector('.toast');
       if (existing) existing.remove();
@@ -805,66 +990,213 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    db.ref(`usuarios/${USER_ID}`).on('value', (snapshot) => {
-      const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
-      const saldo = data.saldo || 0;
-      const totalInv = data.totalInvestido || 0;
-      document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
-      document.getElementById("totalInvestido").innerText = "R$ " + totalInv.toFixed(2).replace(".", ",");
-      document.getElementById("totalRendimentos").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
-      document.getElementById("saldoSaque").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
-      for (let i = 1; i <= 3; i++) {
-        const btn = document.getElementById("btn-inv" + i);
-        const op = opcoes[i];
-        if (saldo < op.investimento) { btn.innerText = "Saldo Insuficiente"; btn.classList.add("sem-saldo"); }
-        else { btn.innerText = "Investir Agora"; btn.classList.remove("sem-saldo"); }
+    // ========== EXTRATO / HISTÓRICO PROFISSIONAL ==========
+    let todasTransacoes = [];
+
+    function filtrarExtrato(tipo, btn) {
+      filtroAtual = tipo;
+      document.querySelectorAll('.extrato-filtros button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderizarExtrato();
+    }
+
+    function renderizarExtrato() {
+      const div = document.getElementById('extratoLista');
+      let transacoes = [...todasTransacoes];
+
+      if (filtroAtual !== 'todos') {
+        transacoes = transacoes.filter(t => t.tipo === filtroAtual);
       }
-      const btnSaque = document.getElementById("btnSaque");
-      if (saldo < 8) { btnSaque.disabled = true; btnSaque.innerText = "Saldo abaixo do mínimo"; }
-      else { btnSaque.disabled = false; btnSaque.innerText = "Solicitar Saque"; }
-    });
-    db.ref(`depositosPendentes/${USER_ID}`).on('child_changed', (snapshot) => {
-      const dep = snapshot.val();
-      if (dep.status === 'Aprovado') adicionarNotificacao('deposito', 'Depósito Aprovado! 💰', `R$ ${dep.valor.toFixed(2).replace('.',',')} aprovado.`);
-      else if (dep.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Depósito Rejeitado', `R$ ${dep.valor.toFixed(2).replace('.',',')} foi rejeitado.`);
-    });
-    db.ref(`saques/${USER_ID}`).on('child_changed', (snapshot) => {
-      const saque = snapshot.val();
-      if (saque.status === 'Aprovado') adicionarNotificacao('aprovado', 'Saque Aprovado! 🎉', `R$ ${saque.valor.toFixed(2).replace('.',',')} aprovado.`);
-      else if (saque.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Saque Rejeitado', 'Valor devolvido ao saldo.');
-    });
-    db.ref(`historico/${USER_ID}/investimentos`).on('value', (snapshot) => {
-      const div = document.getElementById("listaHistorico");
-      const data = snapshot.val();
-      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">📈</div><p>Nenhum investimento realizado</p></li>'; return; }
+
+      // Ordenar por data (mais recente primeiro)
+      transacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+      if (transacoes.length === 0) {
+        div.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📋</div>
+            <p>Nenhuma transação encontrada</p>
+          </div>`;
+        return;
+      }
+
       let html = '';
-      Object.values(data).reverse().forEach(item => {
-        html += `<li><div class="left"><div class="tipo">${item.tipo}</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div></div><div style="text-align:right"><div class="valor pos">+R$ ${item.retorno.toFixed(2).replace('.',',')}</div><div style="font-size:10px;color:#95a5a6">Investido: R$ ${item.investimento.toFixed(2).replace('.',',')}</div></div><div class="status">${item.status}</div></li>`;
+      let dataAtual = '';
+
+      transacoes.forEach(t => {
+        const data = new Date(t.data);
+        const dataStr = data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+        if (dataStr !== dataAtual) {
+          dataAtual = dataStr;
+          html += `<div class="extrato-data-header">${dataStr}</div>`;
+        }
+
+        const icones = {
+          investimento: '📈',
+          deposito: '💰',
+          saque: '💸'
+        };
+
+        const cores = {
+          investimento: { bg: '#e8eaf6', cor: '#667eea' },
+          deposito: { bg: '#d5f5e3', cor: '#27ae60' },
+          saque: { bg: '#f8d7da', cor: '#e74c3c' }
+        };
+
+        const isPositivo = t.tipo === 'deposito' || t.tipo === 'investimento';
+        const valorStr = isPositivo ? `+R$ ${t.valor.toFixed(2).replace('.', ',')}` : `-R$ ${t.valor.toFixed(2).replace('.', ',')}`;
+
+        let detalhes = '';
+        if (t.tipo === 'investimento') {
+          detalhes = `<span>📊 ${t.plano || 'Investimento'}</span><span>💵 Investido: R$ ${(t.investimento || 0).toFixed(2).replace('.', ',')}</span>`;
+        } else if (t.tipo === 'saque') {
+          detalhes = `<span>🔑 ${t.tipoChave ? t.tipoChave.toUpperCase() : 'Pix'}</span><span>👤 ${t.nomeTitular || ''}</span>`;
+        } else if (t.tipo === 'deposito') {
+          detalhes = `<span>💳 Pix</span>`;
+        }
+
+        const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+        html += `
+          <div class="extrato-item">
+            <div class="extrato-icon ${t.tipo}" style="background: ${cores[t.tipo].bg};">
+              ${icones[t.tipo]}
+            </div>
+            <div class="extrato-info">
+              <div class="titulo">${t.titulo || t.tipo.toUpperCase()}</div>
+              <div class="detalhes">
+                ${detalhes}
+                <span>🕐 ${hora}</span>
+              </div>
+            </div>
+            <div class="extrato-valor">
+              <div class="valor ${isPositivo ? 'pos' : 'neg'}">${valorStr}</div>
+              <div class="status ${t.status.toLowerCase()}">${t.status}</div>
+            </div>
+          </div>
+        `;
       });
+
       div.innerHTML = html;
-    });
-    db.ref(`historico/${USER_ID}/depositos`).on('value', (snapshot) => {
-      const div = document.getElementById("listaDepositos");
-      const data = snapshot.val();
-      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">💵</div><p>Nenhum depósito realizado</p></li>'; return; }
-      let html = '';
-      Object.values(data).reverse().forEach(item => {
-        const sc = item.status === 'Aprovado' ? 'aprovado' : item.status === 'Rejeitado' ? 'rejeitado' : 'pendente';
-        html += `<li class="deposito"><div class="left"><div class="tipo">Depósito</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div></div><div class="valor pos" style="color:#2980b9">+R$ ${item.valor.toFixed(2).replace('.',',')}</div><div class="status ${sc}">${item.status}</div></li>`;
+
+      // Atualizar resumo
+      atualizarResumo();
+    }
+
+    function atualizarResumo() {
+      let entradas = 0;
+      let saidas = 0;
+
+      todasTransacoes.forEach(t => {
+        if (t.tipo === 'deposito' || t.tipo === 'investimento') {
+          entradas += t.valor;
+        } else if (t.tipo === 'saque') {
+          saidas += t.valor;
+        }
       });
-      div.innerHTML = html;
-    });
-    db.ref(`saques/${USER_ID}`).on('value', (snapshot) => {
-      const div = document.getElementById("listaSaques");
-      const data = snapshot.val();
-      if (!data) { div.innerHTML = '<li class="empty-state"><div style="font-size:36px;margin-bottom:8px">🏧</div><p>Nenhum saque solicitado</p></li>'; return; }
-      let html = '';
-      Object.values(data).reverse().forEach(item => {
-        const sc = item.status === 'Aprovado' ? 'aprovado' : item.status === 'Rejeitado' ? 'rejeitado' : 'pendente';
-        html += `<li class="saque"><div class="left"><div class="tipo">Saque - ${item.tipoChave.toUpperCase()}</div><div class="data">${new Date(item.data).toLocaleString('pt-BR')}</div><div style="font-size:10px;color:#95a5a6">${item.nomeTitular}</div></div><div class="valor neg">-R$ ${item.valor.toFixed(2).replace('.',',')}</div><div class="status ${sc}">${item.status}</div></li>`;
+
+      document.getElementById('resumoEntradas').innerText = 'R$ ' + entradas.toFixed(2).replace('.', ',');
+      document.getElementById('resumoSaidas').innerText = 'R$ ' + saidas.toFixed(2).replace('.', ',');
+      document.getElementById('resumoTotal').innerText = 'R$ ' + (entradas - saidas).toFixed(2).replace('.', ',');
+    }
+
+    function carregarExtrato() {
+      todasTransacoes = [];
+
+      // Carregar investimentos
+      db.ref(`historico/${USER_ID}/investimentos`).once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'investimento',
+            titulo: `Investimento ${item.tipo}`,
+            valor: item.retorno || 0,
+            investimento: item.investimento || 0,
+            plano: item.tipo,
+            status: item.status || 'Ativo',
+            data: item.data
+          });
+        });
+
+        // Carregar depósitos
+        return db.ref(`historico/${USER_ID}/depositos`).once('value');
+      }).then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'deposito',
+            titulo: 'Depósito via Pix',
+            valor: item.valor || 0,
+            status: item.status || 'Pendente',
+            data: item.data
+          });
+        });
+
+        // Carregar saques
+        return db.ref(`saques/${USER_ID}`).once('value');
+      }).then(snapshot => {
+        const data = snapshot.val() || {};
+        Object.values(data).forEach(item => {
+          todasTransacoes.push({
+            tipo: 'saque',
+            titulo: 'Saque Pix',
+            valor: item.valor || 0,
+            tipoChave: item.tipoChave,
+            nomeTitular: item.nomeTitular,
+            status: item.status || 'Pendente',
+            data: item.data
+          });
+        });
+
+        renderizarExtrato();
       });
-      div.innerHTML = html;
-    });
+    }
+
+    // ========== LISTENERS EM TEMPO REAL ==========
+    function iniciarListeners() {
+      // Saldo
+      USER_REF.on('value', (snapshot) => {
+        const data = snapshot.val() || { saldo: 0, totalInvestido: 0 };
+        const saldo = data.saldo || 0;
+        const totalInv = data.totalInvestido || 0;
+        document.getElementById("saldo").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        document.getElementById("totalInvestido").innerText = "R$ " + totalInv.toFixed(2).replace(".", ",");
+        document.getElementById("totalRendimentos").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        document.getElementById("saldoSaque").innerText = "R$ " + saldo.toFixed(2).replace(".", ",");
+        for (let i = 1; i <= 3; i++) {
+          const btn = document.getElementById("btn-inv" + i);
+          const op = opcoes[i];
+          if (saldo < op.investimento) { btn.innerText = "Saldo Insuficiente"; btn.classList.add("sem-saldo"); }
+          else { btn.innerText = "Investir Agora"; btn.classList.remove("sem-saldo"); }
+        }
+        const btnSaque = document.getElementById("btnSaque");
+        if (saldo < 8) { btnSaque.disabled = true; btnSaque.innerText = "Saldo abaixo do mínimo"; }
+        else { btnSaque.disabled = false; btnSaque.innerText = "Solicitar Saque"; }
+      });
+
+      // Notificações depósitos
+      db.ref(`depositosPendentes/${USER_ID}`).on('child_changed', (snapshot) => {
+        const dep = snapshot.val();
+        if (dep.status === 'Aprovado') adicionarNotificacao('deposito', 'Depósito Aprovado! 💰', `R$ ${dep.valor.toFixed(2).replace('.',',')} aprovado.`);
+        else if (dep.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Depósito Rejeitado', `R$ ${dep.valor.toFixed(2).replace('.',',')} foi rejeitado.`);
+      });
+
+      // Notificações saques
+      db.ref(`saques/${USER_ID}`).on('child_changed', (snapshot) => {
+        const saque = snapshot.val();
+        if (saque.status === 'Aprovado') adicionarNotificacao('aprovado', 'Saque Aprovado! 🎉', `R$ ${saque.valor.toFixed(2).replace('.',',')} aprovado.`);
+        else if (saque.status === 'Rejeitado') adicionarNotificacao('rejeitado', 'Saque Rejeitado', 'Valor devolvido ao saldo.');
+      });
+
+      // Carregar extrato quando dados mudam
+      db.ref(`historico/${USER_ID}`).on('value', () => {
+        carregarExtrato();
+      });
+      db.ref(`saques/${USER_ID}`).on('value', () => {
+        carregarExtrato();
+      });
+    }
   </script>
 </body>
 </html>
